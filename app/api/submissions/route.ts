@@ -4,7 +4,7 @@ import path from 'path'
 
 const DATA_FILE = path.join(process.cwd(), 'data', 'submissions.json')
 
-type SubmissionType = 'inquiry' | 'complaint' | 'suggestion'
+type SubmissionType = 'inquiry' | 'complaint' | 'suggestion' | 'membership'
 
 interface Submission {
   id: string
@@ -13,6 +13,10 @@ interface Submission {
   phone: string
   subject: string
   message: string
+  // membership-only fields
+  lga?: string
+  ward?: string
+  occupation?: string
   createdAt: string
 }
 
@@ -20,12 +24,14 @@ interface Store {
   inquiries: Submission[]
   complaints: Submission[]
   suggestions: Submission[]
+  memberships: Submission[]
 }
 
 const KEY_MAP: Record<SubmissionType, keyof Store> = {
   inquiry: 'inquiries',
   complaint: 'complaints',
   suggestion: 'suggestions',
+  membership: 'memberships',
 }
 
 async function readStore(): Promise<Store> {
@@ -33,7 +39,7 @@ async function readStore(): Promise<Store> {
     const raw = await fs.readFile(DATA_FILE, 'utf-8')
     return JSON.parse(raw)
   } catch {
-    return { inquiries: [], complaints: [], suggestions: [] }
+    return { inquiries: [], complaints: [], suggestions: [], memberships: [] }
   }
 }
 
@@ -55,12 +61,22 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const body = await request.json()
-  const { type, name, email, phone = '', subject, message } = body
+  const {
+    type,
+    name,
+    email,
+    phone = '',
+    subject = '',
+    message = '',
+    lga = '',
+    ward = '',
+    occupation = '',
+  } = body
 
   if (!type || !KEY_MAP[type as SubmissionType]) {
     return Response.json({ error: 'Invalid type' }, { status: 400 })
   }
-  if (!name || !email || !message) {
+  if (!name || !email) {
     return Response.json({ error: 'Missing required fields' }, { status: 400 })
   }
 
@@ -69,8 +85,11 @@ export async function POST(request: NextRequest) {
     name,
     email,
     phone,
-    subject: subject || '',
+    subject,
     message,
+    ...(lga && { lga }),
+    ...(ward && { ward }),
+    ...(occupation && { occupation }),
     createdAt: new Date().toISOString(),
   }
 

@@ -6,7 +6,9 @@ import { useState } from 'react'
 
 const links = [
   { href: '/', label: 'Home' },
+  { href: '/about', label: 'About SKV' },
   { href: '/gallery', label: 'Gallery' },
+  { href: '/join', label: 'Join Us' },
   { href: '/inquiry', label: 'Inquiry' },
   { href: '/complaint', label: 'Complaint' },
   { href: '/suggestions', label: 'Suggestions' },
@@ -17,27 +19,31 @@ export default function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
-    <header className="bg-white border-b border-green-100 shadow-sm sticky top-0 z-20">
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3">
+    <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-20">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3">
 
-        {/* Logo / brand */}
+        {/* Brand */}
         <Link href="/" className="flex items-center gap-3 shrink-0">
-          <div className="w-10 h-10 rounded-full bg-green-700 flex items-center justify-center text-white font-bold text-base select-none">
-            SK
+          <div className="w-10 h-10 rounded-full bg-green-700 flex items-center justify-center text-white font-extrabold text-sm select-none border-2 border-green-500">
+            SKV
           </div>
           <div>
-            <p className="font-bold text-green-800 leading-tight text-sm sm:text-base">Sani Kutigi</p>
-            <p className="text-xs text-gray-500 hidden sm:block">APC Senatorial Candidate</p>
+            <p className="font-extrabold text-green-800 leading-tight text-sm sm:text-base tracking-tight">
+              SKV 2027
+            </p>
+            <p className="text-xs text-gray-500 hidden sm:block leading-tight">
+              Sani Kutigi Vanguard
+            </p>
           </div>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden lg:flex items-center gap-0.5">
           {links.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
-              className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`whitespace-nowrap px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                 pathname === href
                   ? 'bg-green-700 text-white'
                   : 'text-gray-600 hover:text-green-700 hover:bg-green-50'
@@ -50,7 +56,7 @@ export default function Nav() {
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-green-50 transition-colors"
+          className="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-green-50 transition-colors"
           onClick={() => setMobileOpen((o) => !o)}
           aria-label="Toggle navigation"
         >
@@ -64,7 +70,7 @@ export default function Nav() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-green-100 bg-white px-4 pb-4">
+        <div className="lg:hidden border-t border-gray-100 bg-white px-4 pb-4">
           <nav className="flex flex-col gap-1 mt-2">
             {links.map(({ href, label }) => (
               <Link
