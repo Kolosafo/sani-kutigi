@@ -1,62 +1,18 @@
 import { NextRequest } from 'next/server'
-import fs from 'fs/promises'
-import path from 'path'
-
-const DATA_FILE = path.join(process.cwd(), 'data', 'submissions.json')
+import { sql } from '@/lib/db'
 
 type SubmissionType = 'inquiry' | 'complaint' | 'suggestion' | 'membership'
 
-interface Submission {
-  id: string
-  name: string
-  email: string
-  phone: string
-  subject: string
-  message: string
-  // membership-only fields
-  lga?: string
-  ward?: string
-  occupation?: string
-  createdAt: string
-}
-
-interface Store {
-  inquiries: Submission[]
-  complaints: Submission[]
-  suggestions: Submission[]
-  memberships: Submission[]
-}
-
-const KEY_MAP: Record<SubmissionType, keyof Store> = {
-  inquiry: 'inquiries',
-  complaint: 'complaints',
-  suggestion: 'suggestions',
-  membership: 'memberships',
-}
-
-async function readStore(): Promise<Store> {
-  try {
-    const raw = await fs.readFile(DATA_FILE, 'utf-8')
-    return JSON.parse(raw)
-  } catch {
-    return { inquiries: [], complaints: [], suggestions: [], memberships: [] }
-  }
-}
-
-async function writeStore(store: Store): Promise<void> {
-  await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-  await fs.writeFile(DATA_FILE, JSON.stringify(store, null, 2))
-}
+const VALID_TYPES = new Set<SubmissionType>(['inquiry', 'complaint', 'suggestion', 'membership'])
 
 export async function GET(request: NextRequest) {
   const type = request.nextUrl.searchParams.get('type') as SubmissionType | null
-  const store = await readStore()
 
-  if (type && KEY_MAP[type]) {
-    return Response.json(store[KEY_MAP[type]])
-  }
+  const rows = type && VALID_TYPES.has(type)
+    ? await sql`SELECT * FROM submissions WHERE type = ${type} ORDER BY created_at DESC`
+    : await sql`SELECT * FROM submissions ORDER BY created_at DESC`
 
-  return Response.json(store)
+  return Response.json(rows)
 }
 
 export async function POST(request: NextRequest) {
@@ -73,29 +29,19 @@ export async function POST(request: NextRequest) {
     occupation = '',
   } = body
 
-  if (!type || !KEY_MAP[type as SubmissionType]) {
+  if (!type || !VALID_TYPES.has(type)) {
     return Response.json({ error: 'Invalid type' }, { status: 400 })
   }
   if (!name || !email) {
-    return Response.json({ error: 'Missing required fields' }, { status: 400 })
+    return Response.json({ error: 'Missing required fields: name and email' }, { status: 400 })
   }
 
-  const submission: Submission = {
-    id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-    name,
-    email,
-    phone,
-    subject,
-    message,
-    ...(lga && { lga }),
-    ...(ward && { ward }),
-    ...(occupation && { occupation }),
-    createdAt: new Date().toISOString(),
-  }
+  const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
 
-  const store = await readStore()
-  store[KEY_MAP[type as SubmissionType]].push(submission)
-  await writeStore(store)
+  await sql`
+    INSERT INTO submissions (id, type, name, email, phone, subject, message, lga, ward, occupation)
+    VALUES (${id}, ${type}, ${name}, ${email}, ${phone}, ${subject}, ${message}, ${lga}, ${ward}, ${occupation})
+  `
 
-  return Response.json({ success: true, id: submission.id }, { status: 201 })
+  return Response.json({ success: true, id }, { status: 201 })
 }
