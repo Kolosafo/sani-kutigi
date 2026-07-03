@@ -18,4 +18,12 @@ await sql`
   )
 `
 
+await sql`ALTER TABLE submissions ADD COLUMN IF NOT EXISTS nin TEXT NOT NULL DEFAULT ''`
+
+await sql`
+  CREATE UNIQUE INDEX IF NOT EXISTS submissions_membership_nin_unique
+    ON submissions (nin)
+    WHERE type = 'membership' AND nin <> ''
+`
+
 console.log('✓ submissions table ready')

@@ -38,6 +38,7 @@ export default function MembershipForm() {
     name: '',
     email: '',
     phone: '',
+    nin: '',
     lga: '',
     ward: '',
     occupation: '',
@@ -75,6 +76,7 @@ export default function MembershipForm() {
           name: form.name,
           email: form.email,
           phone: form.phone,
+          nin: form.nin,
           lga: form.lga,
           ward: form.ward,
           occupation: form.occupation,
@@ -148,6 +150,18 @@ export default function MembershipForm() {
           </label>
           <input type="text" name="occupation" value={form.occupation} onChange={handleChange}
             placeholder="e.g. Teacher, Farmer, Trader" className={inputBase} />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">
+            National Identification Number (NIN) <span className="text-red-500">*</span>
+          </label>
+          <input type="text" inputMode="numeric" name="nin" required value={form.nin} onChange={handleChange}
+            maxLength={11} pattern="[0-9]{11}" title="Enter your 11-digit NIN"
+            placeholder="e.g. 12345678901" className={inputBase} />
+          <p className="text-xs text-gray-500 mt-1">Your 11-digit National Identification Number. Used to prevent duplicate registrations.</p>
         </div>
       </div>
 
