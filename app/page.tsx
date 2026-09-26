@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import CountdownTimer from './components/CountdownTimer'
+import ExecutiveCard from './components/ExecutiveCard'
+import { executives, registration } from '@/lib/executives'
 
 const aims = [
   { icon: '🏛️', text: 'Support and promote the leadership vision of Distinguished Mohammed Sani Idris Legbo Kutigi.' },
@@ -205,6 +207,33 @@ export default function Home() {
                 />
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Meet Our Executives ── */}
+      <section className="py-16 sm:py-20 px-6 bg-green-900 text-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="text-green-300 text-sm font-semibold uppercase tracking-widest mb-2">Leadership</p>
+            <h2 className="text-3xl sm:text-4xl font-extrabold">Meet Our Executives</h2>
+            <p className="text-green-200 mt-3 max-w-xl mx-auto text-sm sm:text-base">
+              A registered association, Reg. No. {registration.number}, led by a committed team working for a
+              greater Niger South.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {executives.slice(0, 4).map((executive, i) => (
+              <ExecutiveCard key={executive.portfolio} executive={executive} index={i + 1} />
+            ))}
+          </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-10">
+            <Link href="/executives" className="inline-block bg-white text-green-800 font-bold px-8 py-3 rounded-full hover:bg-green-50 transition-colors text-sm shadow-lg">
+              Meet All {executives.length} Executives
+            </Link>
+            <Link href="/executives" className="inline-block border-2 border-white/60 text-white font-bold px-8 py-3 rounded-full hover:bg-white/10 transition-colors text-sm">
+              View Certificate of Registration
+            </Link>
           </div>
         </div>
       </section>

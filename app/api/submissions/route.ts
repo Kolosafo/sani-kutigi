@@ -5,6 +5,11 @@ type SubmissionType = 'inquiry' | 'complaint' | 'suggestion' | 'membership'
 
 const VALID_TYPES = new Set<SubmissionType>(['inquiry', 'complaint', 'suggestion', 'membership'])
 
+function dbError(error: unknown) {
+  console.error('Supabase error:', error)
+  return Response.json({ error: 'Something went wrong on our end. Please try again later.' }, { status: 500 })
+}
+
 export async function GET(request: NextRequest) {
   const type = request.nextUrl.searchParams.get('type') as SubmissionType | null
 
@@ -14,7 +19,7 @@ export async function GET(request: NextRequest) {
   }
 
   const { data, error } = await query
-  if (error) throw error
+  if (error) return dbError(error)
 
   return Response.json(data)
 }
@@ -53,7 +58,7 @@ export async function POST(request: NextRequest) {
       .eq('type', 'membership')
       .eq('nin', nin)
       .limit(1)
-    if (error) throw error
+    if (error) return dbError(error)
     if (existing.length > 0) {
       return Response.json({ error: 'This NIN is already registered as a member.' }, { status: 409 })
     }
@@ -68,7 +73,7 @@ export async function POST(request: NextRequest) {
     if (error.code === '23505') {
       return Response.json({ error: 'This NIN is already registered as a member.' }, { status: 409 })
     }
-    throw error
+    return dbError(error)
   }
 
   return Response.json({ success: true, id }, { status: 201 })

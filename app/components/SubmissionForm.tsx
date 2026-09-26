@@ -35,7 +35,7 @@ export default function SubmissionForm({ type, subjectPlaceholder, messagePlaceh
       })
 
       if (!res.ok) {
-        const data = await res.json()
+        const data = await res.json().catch(() => ({}))
         throw new Error(data.error || 'Submission failed')
       }
 
