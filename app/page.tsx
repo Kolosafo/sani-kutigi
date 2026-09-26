@@ -114,14 +114,15 @@ export default function Home() {
 
       {/* ── Countdown ── */}
       <section id="countdown" className="relative py-16 sm:py-20 px-6 bg-white overflow-hidden">
-        <div className="absolute inset-y-0 right-0 w-56 hidden xl:block">
+        <div className="absolute inset-y-0 right-0 w-72 hidden xl:block">
           <Image
-            src="/countdown-campain-banner.jpeg"
-            alt="Election countdown"
+            src="/watermark.jpeg"
+            alt="Sani Kutigi 2027, compliment of SKV"
             fill
             style={{ objectFit: 'cover' }}
-            className="opacity-15"
+            className="opacity-20"
           />
+          <div className="absolute inset-0 bg-linear-to-r from-white to-transparent" />
         </div>
         <div className="relative max-w-4xl mx-auto text-center">
           <p className="text-green-700 text-sm font-semibold uppercase tracking-widest mb-3">Mark Your Calendar</p>
