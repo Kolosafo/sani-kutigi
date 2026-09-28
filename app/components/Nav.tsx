@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+import MemberCountButton from './MemberCountButton'
 
 const links = [
   { href: '/', label: 'Home' },
@@ -67,6 +68,10 @@ export default function Nav() {
               : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />}
           </svg>
         </button>
+      </div>
+
+      <div className="border-t border-green-100 bg-green-50 px-4 py-2">
+        <MemberCountButton />
       </div>
 
       {/* Mobile menu */}

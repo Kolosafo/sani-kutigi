@@ -113,25 +113,26 @@ export default function Home() {
       </section>
 
       {/* ── Countdown ── */}
-      <section id="countdown" className="relative py-16 sm:py-20 px-6 bg-white overflow-hidden">
-        <div className="absolute inset-y-0 right-0 w-72 hidden xl:block">
+      <section id="countdown" className="relative scroll-mt-32 py-16 sm:py-20 px-6 bg-white overflow-hidden">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-full sm:w-1/2 lg:w-2/5">
           <Image
             src="/watermark.jpeg"
-            alt="Sani Kutigi 2027, compliment of SKV"
+            alt=""
             fill
-            style={{ objectFit: 'cover' }}
-            className="opacity-20"
+            sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 40vw"
+            style={{ objectFit: 'contain', objectPosition: 'right center' }}
+            className="opacity-50 sm:opacity-70"
           />
-          <div className="absolute inset-0 bg-linear-to-r from-white to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-r from-white/85 via-white/50 to-white/25 sm:from-white sm:via-white/35 sm:to-white/10" />
         </div>
         <div className="relative max-w-4xl mx-auto text-center">
           <p className="text-green-700 text-sm font-semibold uppercase tracking-widest mb-3">Mark Your Calendar</p>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-2">
             Senatorial Election Countdown
           </h2>
-          <p className="text-gray-400 text-lg mb-10">Saturday, January 16, 2027</p>
+          <p className="text-gray-600 text-lg mb-10">Saturday, January 16, 2027</p>
           <CountdownTimer />
-          <p className="mt-8 text-gray-500 text-sm">
+          <p className="mt-8 text-gray-600 text-sm">
             Your vote for{' '}
             <span className="font-semibold text-green-700">Distinguished Mohammed Sani Idris Legbo Kutigi</span>{' '}
             is a vote for progress in Niger State South.

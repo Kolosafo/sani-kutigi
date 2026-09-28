@@ -90,6 +90,7 @@ export default function MembershipForm() {
         throw new Error(data.error || 'Registration failed')
       }
 
+      window.dispatchEvent(new Event('skv:member-registered'))
       setStatus('success')
     } catch (err) {
       setStatus('error')

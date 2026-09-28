@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server'
 import { supabase } from '@/lib/db'
+import { notifyMemberRegistered } from '@/lib/membership-count'
 
 type SubmissionType = 'inquiry' | 'complaint' | 'suggestion' | 'membership'
 
@@ -75,6 +76,8 @@ export async function POST(request: NextRequest) {
     }
     return dbError(error)
   }
+
+  if (type === 'membership') await notifyMemberRegistered()
 
   return Response.json({ success: true, id }, { status: 201 })
 }
