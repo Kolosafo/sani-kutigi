@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import type { MembershipRegistration } from '@/lib/membership'
+import MembershipCard from './MembershipCard'
 
 const inputBase =
   'w-full border border-gray-300 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition'
@@ -47,6 +49,7 @@ export default function MembershipForm() {
   })
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
+  const [membership, setMembership] = useState<MembershipRegistration | null>(null)
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -85,11 +88,13 @@ export default function MembershipForm() {
         }),
       })
 
+      const data = await res.json().catch(() => ({}))
+
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
         throw new Error(data.error || 'Registration failed')
       }
 
+      setMembership(data.membership)
       window.dispatchEvent(new Event('skv:member-registered'))
       setStatus('success')
     } catch (err) {
@@ -98,21 +103,24 @@ export default function MembershipForm() {
     }
   }
 
-  if (status === 'success') {
+  if (status === 'success' && membership) {
     return (
-      <div className="bg-green-50 border border-green-200 rounded-2xl p-10 text-center">
-        <div className="w-16 h-16 rounded-full bg-green-700 text-white text-3xl flex items-center justify-center mx-auto mb-4">
-          ✓
+      <div data-membership-success className="bg-green-50 border border-green-200 rounded-2xl p-6 sm:p-8 text-center">
+        <div data-membership-print-hidden role="status">
+          <div className="w-16 h-16 rounded-full bg-green-700 text-white text-3xl flex items-center justify-center mx-auto mb-4">
+            ✓
+          </div>
+          <h3 className="text-xl font-bold text-green-800 mb-2">Welcome to SKV 2027!</h3>
+          <p className="text-gray-600 mb-2">
+            Thank you, <span className="font-semibold">{membership.name}</span>. Your membership
+            registration has been received and will be reviewed by the coordinating office.
+          </p>
+          <p className="text-gray-500 text-sm">
+            You will be contacted via <span className="font-medium">{membership.email}</span> once
+            your membership is confirmed.
+          </p>
         </div>
-        <h3 className="text-xl font-bold text-green-800 mb-2">Welcome to SKV 2027!</h3>
-        <p className="text-gray-600 mb-2">
-          Thank you, <span className="font-semibold">{form.name}</span>. Your membership
-          registration has been received and will be reviewed by the coordinating office.
-        </p>
-        <p className="text-gray-500 text-sm">
-          You will be contacted via <span className="font-medium">{form.email}</span> once
-          your membership is confirmed.
-        </p>
+        <MembershipCard membership={membership} />
       </div>
     )
   }

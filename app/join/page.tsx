@@ -9,11 +9,11 @@ const benefits = [
 
 export default function JoinPage() {
   return (
-    <div className="py-14 px-6">
+    <div data-membership-page className="py-14 px-6">
       <div className="max-w-5xl mx-auto">
 
         {/* Header */}
-        <div className="text-center mb-12">
+        <div data-membership-print-hidden className="text-center mb-12">
           <span className="inline-block bg-green-100 text-green-800 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
             Membership
           </span>
@@ -30,10 +30,10 @@ export default function JoinPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div data-membership-layout className="grid grid-cols-1 lg:grid-cols-3 gap-10">
 
           {/* Left: eligibility & benefits */}
-          <div className="lg:col-span-1 space-y-6">
+          <div data-membership-print-hidden className="lg:col-span-1 space-y-6">
 
             <div className="bg-green-800 text-white rounded-2xl p-6">
               <h2 className="font-extrabold text-lg mb-3">Eligibility</h2>
@@ -76,9 +76,9 @@ export default function JoinPage() {
 
           {/* Right: form */}
           <div className="lg:col-span-2">
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8 shadow-sm">
-              <h2 className="font-extrabold text-gray-900 text-xl mb-1">Registration Form</h2>
-              <p className="text-gray-400 text-sm mb-6">
+            <div data-membership-form-panel className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+              <h2 data-membership-print-hidden className="font-extrabold text-gray-900 text-xl mb-1">Registration Form</h2>
+              <p data-membership-print-hidden className="text-gray-400 text-sm mb-6">
                 Fields marked <span className="text-red-500 font-bold">*</span> are required.
               </p>
               <MembershipForm />
