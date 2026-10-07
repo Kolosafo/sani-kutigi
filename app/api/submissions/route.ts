@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 import { supabase } from '@/lib/db'
 import { notifyMemberRegistered } from '@/lib/membership-count'
-import type { MembershipRegistration } from '@/lib/membership'
+import { MEMBERSHIP_CARD_FIELDS, toMembershipRegistration } from '@/lib/membership'
 
 type SubmissionType = 'inquiry' | 'complaint' | 'suggestion' | 'membership'
 
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
   const { data: submission, error } = await supabase
     .from('submissions')
     .insert({ id, type, name, email, phone, subject, message, lga, ward, occupation, nin })
-    .select('id, name, email, phone, lga, ward, occupation, created_at')
+    .select(MEMBERSHIP_CARD_FIELDS)
     .single()
   if (error) {
     if (error.code === '23505') {
@@ -84,16 +84,7 @@ export async function POST(request: NextRequest) {
     await notifyMemberRegistered()
 
     // Only return the fields needed for the card; NIN stays on the server.
-    const membership: MembershipRegistration = {
-      id: submission.id,
-      name: submission.name,
-      email: submission.email,
-      phone: submission.phone,
-      lga: submission.lga,
-      ward: submission.ward,
-      occupation: submission.occupation,
-      createdAt: submission.created_at,
-    }
+    const membership = toMembershipRegistration(submission)
 
     return Response.json({ success: true, id, membership }, { status: 201 })
   }

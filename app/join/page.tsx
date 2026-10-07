@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import MembershipForm from '../components/MembershipForm'
 
 const benefits = [
@@ -34,6 +35,16 @@ export default function JoinPage() {
 
           {/* Left: eligibility & benefits */}
           <div data-membership-print-hidden className="lg:col-span-1 space-y-6">
+
+            <div className="bg-green-50 border border-green-200 rounded-2xl p-6">
+              <h2 className="font-extrabold text-green-900 text-lg mb-2">Already registered?</h2>
+              <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                Retrieve your membership card to print or download it again anytime.
+              </p>
+              <Link href="/membership" className="block bg-green-700 text-white text-center text-sm font-bold px-4 py-3 rounded-full hover:bg-green-800 transition-colors">
+                Download membership
+              </Link>
+            </div>
 
             <div className="bg-green-800 text-white rounded-2xl p-6">
               <h2 className="font-extrabold text-lg mb-3">Eligibility</h2>

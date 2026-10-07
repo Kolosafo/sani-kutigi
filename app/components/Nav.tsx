@@ -11,6 +11,7 @@ const links = [
   { href: '/executives', label: 'Executives' },
   { href: '/gallery', label: 'Gallery' },
   { href: '/join', label: 'Join Us' },
+  { href: '/membership', label: 'Download Membership' },
   { href: '/inquiry', label: 'Inquiry' },
   { href: '/complaint', label: 'Complaint' },
   { href: '/suggestions', label: 'Suggestions' },
@@ -40,7 +41,7 @@ export default function Nav() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden lg:flex items-center gap-0.5">
+        <nav className="hidden xl:flex items-center gap-0.5">
           {links.map(({ href, label }) => (
             <Link
               key={href}
@@ -58,7 +59,7 @@ export default function Nav() {
 
         {/* Mobile hamburger */}
         <button
-          className="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-green-50 transition-colors"
+          className="xl:hidden p-2 rounded-lg text-gray-600 hover:bg-green-50 transition-colors"
           onClick={() => setMobileOpen((o) => !o)}
           aria-label="Toggle navigation"
         >
@@ -76,7 +77,7 @@ export default function Nav() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-gray-100 bg-white px-4 pb-4">
+        <div className="xl:hidden border-t border-gray-100 bg-white px-4 pb-4">
           <nav className="flex flex-col gap-1 mt-2">
             {links.map(({ href, label }) => (
               <Link

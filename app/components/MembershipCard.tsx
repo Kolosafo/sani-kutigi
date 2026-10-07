@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import {
   getMembershipDetails,
   MEMBERSHIP_REVIEW_NOTICE,
@@ -84,7 +85,10 @@ export default function MembershipCard({ membership }: { membership: MembershipR
             {downloading ? 'Preparing PDF…' : 'Download membership PDF'}
           </button>
         </div>
-        <p className="mt-3 text-xs text-gray-500">Save your card before leaving this page so you can keep it for your records.</p>
+        <p className="mt-3 text-xs text-gray-500">
+          You can retrieve this card again anytime from{' '}
+          <Link href="/membership" className="font-semibold text-green-700 underline underline-offset-2">Download Membership</Link>.
+        </p>
         {error && <p role="alert" className="mt-3 text-sm text-red-600">{error}</p>}
       </div>
     </div>

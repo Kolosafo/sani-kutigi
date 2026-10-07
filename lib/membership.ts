@@ -9,6 +9,23 @@ export type MembershipRegistration = {
   createdAt: string
 }
 
+export const MEMBERSHIP_CARD_FIELDS = 'id, name, email, phone, lga, ward, occupation, created_at'
+
+type MembershipSubmission = Omit<MembershipRegistration, 'createdAt'> & { created_at: string }
+
+export function toMembershipRegistration(submission: MembershipSubmission): MembershipRegistration {
+  return {
+    id: submission.id,
+    name: submission.name,
+    email: submission.email,
+    phone: submission.phone,
+    lga: submission.lga,
+    ward: submission.ward,
+    occupation: submission.occupation,
+    createdAt: submission.created_at,
+  }
+}
+
 export const MEMBERSHIP_REVIEW_NOTICE =
   'This card acknowledges your registration. Membership is pending review by the coordinating office.'
 
