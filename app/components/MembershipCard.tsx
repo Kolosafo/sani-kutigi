@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   getMembershipDetails,
   MEMBERSHIP_REVIEW_NOTICE,
@@ -11,6 +12,8 @@ import {
 export default function MembershipCard({ membership }: { membership: MembershipRegistration }) {
   const [downloading, setDownloading] = useState(false)
   const [error, setError] = useState('')
+  const [failedPhotoUrl, setFailedPhotoUrl] = useState<string | null>(null)
+  const photoUnavailable = Boolean(membership.passportPhotoUrl && failedPhotoUrl === membership.passportPhotoUrl)
 
   async function handleDownload() {
     setDownloading(true)
@@ -19,8 +22,10 @@ export default function MembershipCard({ membership }: { membership: MembershipR
     try {
       const { downloadMembershipPdf } = await import('@/lib/membership-pdf')
       await downloadMembershipPdf(membership)
-    } catch {
-      setError('Unable to download your card. Please try again, or use Print membership to save it as a PDF.')
+    } catch (downloadError) {
+      setError(downloadError instanceof Error && downloadError.name === 'MembershipPhotoError'
+        ? downloadError.message
+        : 'Unable to download your card. Please try again, or use Print membership to save it as a PDF.')
     } finally {
       setDownloading(false)
     }
@@ -40,13 +45,36 @@ export default function MembershipCard({ membership }: { membership: MembershipR
           <div className="flex-1 bg-red-600" />
         </div>
 
-        <div className="border-b border-gray-200 bg-green-800 px-6 py-6 text-white sm:px-8">
-          <p className="text-xs font-bold uppercase tracking-widest text-green-100">SKV 2027</p>
-          <h3 id="membership-card-title" className="mt-1 text-xl font-extrabold sm:text-2xl">
-            Membership Registration Card
-          </h3>
-          <p className="mt-2 text-sm text-green-100">The Sani Kutigi Vanguard</p>
-          <p className="mt-1 text-xs italic text-green-100">Leading the Way for a Greater Niger South</p>
+        <div className="flex flex-col items-start justify-between gap-4 border-b border-gray-200 bg-green-800 px-6 py-6 text-white sm:flex-row sm:gap-6 sm:px-8">
+          <div className="min-w-0">
+            <p className="text-xs font-bold uppercase tracking-widest text-green-100">SKV 2027</p>
+            <h3 id="membership-card-title" className="mt-1 break-words text-xl font-extrabold sm:text-2xl">
+              Membership Registration Card
+            </h3>
+            <p className="mt-2 text-sm text-green-100">The Sani Kutigi Vanguard</p>
+            <p className="mt-1 text-xs italic text-green-100">Leading the Way for a Greater Niger South</p>
+          </div>
+          {membership.passportPhotoUrl && (
+            <div className="w-22 shrink-0 self-center sm:w-24 sm:self-auto">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-md border-2 border-white bg-white">
+                {photoUnavailable ? (
+                  <p className="flex h-full items-center p-2 text-center text-xs text-gray-600">Photograph unavailable</p>
+                ) : (
+                  <Image
+                    src={membership.passportPhotoUrl}
+                    alt={`Passport photograph of ${membership.name}`}
+                    fill
+                    sizes="96px"
+                    unoptimized
+                    loading="eager"
+                    className="object-contain"
+                    onError={() => setFailedPhotoUrl(membership.passportPhotoUrl)}
+                  />
+                )}
+              </div>
+              <p className="mt-1.5 text-center text-[10px] leading-tight text-green-100">Passport photograph</p>
+            </div>
+          )}
         </div>
 
         <div className="p-6 sm:p-8">
@@ -71,7 +99,13 @@ export default function MembershipCard({ membership }: { membership: MembershipR
         <div className="flex flex-col gap-3 sm:flex-row">
           <button
             type="button"
-            onClick={() => window.print()}
+            onClick={() => {
+              if (photoUnavailable) {
+                setError('Your passport photograph could not be loaded. Retrieve your membership card again from Download Membership before printing.')
+                return
+              }
+              window.print()
+            }}
             className="rounded-full border border-green-700 bg-white px-6 py-3 text-sm font-bold text-green-800 transition-colors hover:bg-green-50"
           >
             Print membership
@@ -90,6 +124,11 @@ export default function MembershipCard({ membership }: { membership: MembershipR
           <Link href="/membership" className="font-semibold text-green-700 underline underline-offset-2">Download Membership</Link>.
         </p>
         {error && <p role="alert" className="mt-3 text-sm text-red-600">{error}</p>}
+        {photoUnavailable && !error && (
+          <p role="alert" className="mt-3 text-sm text-red-600">
+            Your passport photograph could not be loaded. Retrieve your membership card again from Download Membership to refresh it.
+          </p>
+        )}
       </div>
     </div>
   )

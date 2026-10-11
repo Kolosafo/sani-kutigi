@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sani Kutigi Vanguard
 
-## Getting Started
+Next.js application for membership registration, membership cards, inquiries, complaints, and suggestions.
 
-First, run the development server:
+## Local development
+
+Install dependencies with `npm install`, then create `.env.local` at the project root:
+
+```dotenv
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SECRET_KEY=your-server-only-supabase-secret-key
+```
+
+Keep the secret key on the server. Configure the same variables on your deployment platform.
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). Use `npm run lint` and `npm run build` to check changes.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Supabase setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+For a **new project**, run [supabase/schema.sql](supabase/schema.sql) in the Supabase dashboard SQL Editor, then run [supabase/migrations/202610110001_membership_registration_details.sql](supabase/migrations/202610110001_membership_registration_details.sql).
 
-## Learn More
+For an **existing project**, run only [the membership registration migration](supabase/migrations/202610110001_membership_registration_details.sql) in the SQL Editor before deploying the updated application. The migration runs in a transaction, preserves existing submissions, and can be rerun without changing issued registration numbers. It adds:
 
-To learn more about Next.js, take a look at the following resources:
+- `voter_id`: an optional voter's identification number (VIN), saved as text.
+- `passport_photo_path`: the private storage path for the member's passport photograph. New registrations require a JPEG or PNG photograph up to 2 MiB; existing members retain their records without needing a photograph.
+- `registration_number`: a positive, unique serial for memberships. Existing memberships receive numbers in registration-date order, with the submission ID resolving identical timestamps.
+- A private `membership-passports` Storage bucket restricted to JPEG/PNG files up to 2 MiB.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The database assigns serial numbers using a private, locked counter in the same transaction as the registration. Failed inserts and non-membership submissions do not consume numbers. Existing numbers stay stable when member details are updated; deleting a member does not recycle their number. The application displays serials as `SKV-2027-000001`, `SKV-2027-000002`, and so on.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The submissions table and counter use row-level security. The migration creates no public database or Storage policies, and restricts the counter's function to the server role. Uploads and card retrieval use the application's server routes.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The migration has to be run in Supabase separately; configuring the application environment variables does not update the database schema.

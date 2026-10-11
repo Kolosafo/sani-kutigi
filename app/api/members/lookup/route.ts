@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/db'
 import { MEMBERSHIP_CARD_FIELDS, toMembershipRegistration } from '@/lib/membership'
+import { getPassportPhotoUrl } from '@/lib/membership-photo'
 
 const responseOptions = { headers: { 'Cache-Control': 'private, no-store' } }
 
@@ -34,5 +35,10 @@ export async function POST(request: Request) {
     return Response.json({ error: 'No membership matches those details. Check the email and NIN you used when registering.' }, { ...responseOptions, status: 404 })
   }
 
-  return Response.json({ membership: toMembershipRegistration(data) }, responseOptions)
+  try {
+    const passportPhotoUrl = await getPassportPhotoUrl(data.passport_photo_path)
+    return Response.json({ membership: toMembershipRegistration(data, passportPhotoUrl) }, responseOptions)
+  } catch {
+    return Response.json({ error: 'Unable to load your membership photograph. Please try again later.' }, { ...responseOptions, status: 500 })
+  }
 }

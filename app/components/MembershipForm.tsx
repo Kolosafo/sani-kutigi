@@ -1,7 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-import type { MembershipRegistration } from '@/lib/membership'
+import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
+import {
+  PASSPORT_PHOTO_MAX_BYTES,
+  PASSPORT_PHOTO_TYPES,
+  type MembershipRegistration,
+} from '@/lib/membership'
 import MembershipCard from './MembershipCard'
 
 const inputBase =
@@ -41,6 +46,7 @@ export default function MembershipForm() {
     email: '',
     phone: '',
     nin: '',
+    voter_id: '',
     lga: '',
     ward: '',
     occupation: '',
@@ -50,6 +56,66 @@ export default function MembershipForm() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
   const [membership, setMembership] = useState<MembershipRegistration | null>(null)
+  const [passportPhoto, setPassportPhoto] = useState<File | null>(null)
+  const [passportPreview, setPassportPreview] = useState('')
+  const [passportError, setPassportError] = useState('')
+  const [photoProcessing, setPhotoProcessing] = useState(false)
+  const passportInput = useRef<HTMLInputElement>(null)
+  const photoSelection = useRef(0)
+  const photoObjectUrl = useRef('')
+
+  useEffect(() => {
+    return () => {
+      photoSelection.current += 1
+      if (photoObjectUrl.current) URL.revokeObjectURL(photoObjectUrl.current)
+    }
+  }, [])
+
+  async function handlePassportChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const input = e.currentTarget
+    const file = input.files?.[0]
+    const selection = ++photoSelection.current
+
+    if (photoObjectUrl.current) URL.revokeObjectURL(photoObjectUrl.current)
+    photoObjectUrl.current = ''
+    setPassportPhoto(null)
+    setPassportPreview('')
+    setPassportError('')
+    setPhotoProcessing(false)
+
+    if (!file) return
+    if (!PASSPORT_PHOTO_TYPES.some((type) => type === file.type)) {
+      setPassportError('Please choose a JPEG or PNG passport photograph.')
+      input.value = ''
+      return
+    }
+    if (file.size > PASSPORT_PHOTO_MAX_BYTES) {
+      setPassportError('Your passport photograph must be 2 MB or smaller.')
+      input.value = ''
+      return
+    }
+
+    const objectUrl = URL.createObjectURL(file)
+    photoObjectUrl.current = objectUrl
+    setPhotoProcessing(true)
+
+    try {
+      const preview = new window.Image()
+      preview.src = objectUrl
+      await preview.decode()
+      if (selection !== photoSelection.current) return
+      setPassportPhoto(file)
+      setPassportPreview(objectUrl)
+    } catch {
+      if (selection !== photoSelection.current) return
+      URL.revokeObjectURL(objectUrl)
+      photoObjectUrl.current = ''
+      input.value = ''
+      setPassportError('This photograph could not be opened. Please choose another JPEG or PNG image.')
+    } finally {
+      if (selection === photoSelection.current) setPhotoProcessing(false)
+    }
+  }
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -63,6 +129,12 @@ export default function MembershipForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (photoProcessing) return
+    if (!passportPhoto) {
+      setPassportError('Please upload your passport photograph to register.')
+      passportInput.current?.focus()
+      return
+    }
     if (!form.agreed) {
       setErrorMsg('You must agree to the Oath of Membership to proceed.')
       return
@@ -71,21 +143,23 @@ export default function MembershipForm() {
     setErrorMsg('')
 
     try {
+      const body = new FormData()
+      body.set('type', 'membership')
+      body.set('name', form.name)
+      body.set('email', form.email)
+      body.set('phone', form.phone)
+      body.set('nin', form.nin)
+      body.set('voter_id', form.voter_id)
+      body.set('lga', form.lga)
+      body.set('ward', form.ward)
+      body.set('occupation', form.occupation)
+      body.set('subject', 'Membership Registration')
+      body.set('message', form.message || 'Membership registration request.')
+      body.set('passport_photo', passportPhoto)
+
       const res = await fetch('/api/submissions', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'membership',
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          nin: form.nin,
-          lga: form.lga,
-          ward: form.ward,
-          occupation: form.occupation,
-          subject: 'Membership Registration',
-          message: form.message || 'Membership registration request.',
-        }),
+        body,
       })
 
       const data = await res.json().catch(() => ({}))
@@ -111,6 +185,11 @@ export default function MembershipForm() {
             ✓
           </div>
           <h3 className="text-xl font-bold text-green-800 mb-2">Welcome to SKV 2027!</h3>
+          <div className="bg-white border border-green-200 rounded-xl px-4 py-3 mb-4">
+            <p className="text-sm text-green-800 font-medium">Your registration number</p>
+            <p className="text-2xl font-bold text-green-900 tracking-wide break-all">{membership.registrationNumber}</p>
+            <p className="text-xs text-gray-500 mt-1">Keep this number for future enquiries.</p>
+          </div>
           <p className="text-gray-600 mb-2">
             Thank you, <span className="font-semibold">{membership.name}</span>. Your membership
             registration has been received and will be reviewed by the coordinating office.
@@ -172,6 +251,38 @@ export default function MembershipForm() {
             placeholder="e.g. 12345678901" className={inputBase} />
           <p className="text-xs text-gray-500 mt-1">Your 11-digit National Identification Number. Used to prevent duplicate registrations.</p>
         </div>
+        <div>
+          <label htmlFor="membership-voter-id" className="block text-sm font-semibold text-gray-700 mb-1">
+            Voter Identification Number (VIN) <span className="text-gray-400 font-normal">(optional)</span>
+          </label>
+          <input id="membership-voter-id" type="text" name="voter_id" value={form.voter_id} onChange={handleChange}
+            maxLength={32} pattern="[A-Za-z0-9 ]+" title="Use letters, numbers and spaces only"
+            aria-describedby="membership-voter-id-help" placeholder="Enter the VIN on your voter card" className={inputBase} />
+          <p id="membership-voter-id-help" className="text-xs text-gray-500 mt-1">Enter your VIN as printed on your voter card, if available.</p>
+        </div>
+      </div>
+
+      <div className="border border-gray-200 bg-gray-50 rounded-2xl p-5">
+        <label htmlFor="membership-passport-photo" className="block text-sm font-semibold text-gray-700 mb-1">
+          Passport Photograph <span className="text-red-500">*</span>
+        </label>
+        <p id="membership-passport-photo-help" className="text-xs text-gray-500 mb-3">
+          Upload a clear, recent passport photograph showing your face. JPEG or PNG, maximum 2 MB.
+        </p>
+        <input ref={passportInput} id="membership-passport-photo" type="file" name="passport_photo" required
+          accept={PASSPORT_PHOTO_TYPES.join(',')} onChange={handlePassportChange} disabled={status === 'loading'}
+          aria-describedby={`membership-passport-photo-help${passportError ? ' membership-passport-photo-error' : ''}`}
+          aria-invalid={Boolean(passportError)}
+          className={`${inputBase} bg-white file:mr-3 file:rounded-lg file:border-0 file:bg-green-100 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-green-800`} />
+        {photoProcessing && <p role="status" className="text-xs text-gray-500 mt-2">Checking your photograph…</p>}
+        {passportError && <p id="membership-passport-photo-error" role="alert" className="text-sm text-red-600 mt-2">{passportError}</p>}
+        {passportPreview && (
+          <div className="mt-4 flex items-center gap-4">
+            <Image src={passportPreview} width={96} height={120} unoptimized
+              alt="Preview of your selected passport photograph" className="h-30 w-24 rounded-lg border border-gray-200 bg-white object-contain" />
+            <p className="text-sm text-gray-600 break-all">{passportPhoto?.name}</p>
+          </div>
+        )}
       </div>
 
       {/* Location */}
@@ -227,17 +338,17 @@ export default function MembershipForm() {
       </div>
 
       {errorMsg && (
-        <p className="text-red-600 text-sm bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+        <p role="alert" className="text-red-600 text-sm bg-red-50 border border-red-200 rounded-xl px-4 py-3">
           {errorMsg}
         </p>
       )}
 
       <button
         type="submit"
-        disabled={status === 'loading'}
+        disabled={status === 'loading' || photoProcessing}
         className="w-full sm:w-auto bg-green-700 text-white font-bold px-10 py-3 rounded-full hover:bg-green-800 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
       >
-        {status === 'loading' ? 'Registering…' : 'Register as a Member'}
+        {status === 'loading' ? 'Registering…' : photoProcessing ? 'Checking photograph…' : 'Register as a Member'}
       </button>
     </form>
   )

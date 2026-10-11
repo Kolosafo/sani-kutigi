@@ -5,7 +5,21 @@ import {
   type MembershipRegistration,
 } from './membership'
 
-export function createMembershipPdf(membership: MembershipRegistration, font: string) {
+type PassportPhoto = {
+  bytes: Uint8Array
+  format: 'JPEG' | 'PNG'
+}
+
+class MembershipPhotoError extends Error {
+  constructor() {
+    super('Your passport photograph could not be loaded. Retrieve your membership card again from Download Membership, then try downloading it.')
+    this.name = 'MembershipPhotoError'
+  }
+}
+
+export function createMembershipPdf(membership: MembershipRegistration, font: string, photo?: PassportPhoto | null) {
+  if (membership.passportPhotoUrl && !photo) throw new MembershipPhotoError()
+
   const pdf = new jsPDF({ format: 'a4', unit: 'mm', compress: true })
   pdf.addFileToVFS('Geist-Regular.ttf', font)
   pdf.addFont('Geist-Regular.ttf', 'Geist', 'normal')
@@ -14,10 +28,22 @@ export function createMembershipPdf(membership: MembershipRegistration, font: st
   const margin = 16
   const width = pageWidth - margin * 2
   const columnWidth = (width - 16) / 2
+  let photoDimensions: { width: number; height: number } | null = null
+  if (photo) {
+    try {
+      const dimensions = pdf.getImageProperties(photo.bytes)
+      if (!Number.isFinite(dimensions.width) || !Number.isFinite(dimensions.height) || dimensions.width <= 0 || dimensions.height <= 0) {
+        throw new MembershipPhotoError()
+      }
+      photoDimensions = dimensions
+    } catch {
+      throw new MembershipPhotoError()
+    }
+  }
 
   pdf.setProperties({
     title: 'SKV 2027 Membership Registration Card',
-    subject: `Membership registration ${membership.id}`,
+    subject: `Membership registration ${membership.registrationNumber}`,
     author: 'The Sani Kutigi Vanguard',
   })
 
@@ -40,6 +66,31 @@ export function createMembershipPdf(membership: MembershipRegistration, font: st
     pdf.text('The Sani Kutigi Vanguard', margin + 8, margin + 29)
     pdf.setFontSize(9)
     pdf.text('Leading the Way for a Greater Niger South', margin + 8, margin + 35)
+
+    if (photo && photoDimensions) {
+      const photoWidth = 26
+      const photoHeight = 32
+      const photoX = pageWidth - margin - 8 - photoWidth
+      const photoY = margin + 5
+      pdf.setFillColor('#ffffff')
+      pdf.rect(photoX - 1, photoY - 1, photoWidth + 2, photoHeight + 2, 'F')
+      const scale = Math.min(photoWidth / photoDimensions.width, photoHeight / photoDimensions.height)
+      const imageWidth = photoDimensions.width * scale
+      const imageHeight = photoDimensions.height * scale
+      try {
+        pdf.addImage(
+          photo.bytes,
+          photo.format,
+          photoX + (photoWidth - imageWidth) / 2,
+          photoY + (photoHeight - imageHeight) / 2,
+          imageWidth,
+          imageHeight,
+          'passport-photograph',
+        )
+      } catch {
+        throw new MembershipPhotoError()
+      }
+    }
 
     pdf.setFont('helvetica', 'bold')
     pdf.setFontSize(10)
@@ -100,14 +151,37 @@ export function createMembershipPdf(membership: MembershipRegistration, font: st
 }
 
 export async function downloadMembershipPdf(membership: MembershipRegistration) {
-  const response = await fetch('/fonts/Geist-Regular.ttf')
-  if (!response.ok) throw new Error('Unable to load the membership PDF font')
-  const bytes = new Uint8Array(await response.arrayBuffer())
+  async function loadFont() {
+    const response = await fetch('/fonts/Geist-Regular.ttf')
+    if (!response.ok) throw new Error('Unable to load the membership PDF font')
+    return new Uint8Array(await response.arrayBuffer())
+  }
+
+  async function loadPhoto(): Promise<PassportPhoto | null> {
+    if (!membership.passportPhotoUrl) return null
+    try {
+      const response = await fetch(membership.passportPhotoUrl, { cache: 'no-store' })
+      if (!response.ok) throw new MembershipPhotoError()
+      const bytes = new Uint8Array(await response.arrayBuffer())
+      if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
+        return { bytes, format: 'JPEG' }
+      }
+      const pngSignature = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]
+      if (pngSignature.every((byte, index) => bytes[index] === byte)) {
+        return { bytes, format: 'PNG' }
+      }
+      throw new MembershipPhotoError()
+    } catch {
+      throw new MembershipPhotoError()
+    }
+  }
+
+  const [bytes, photo] = await Promise.all([loadFont(), loadPhoto()])
   let binary = ''
   for (let offset = 0; offset < bytes.length; offset += 8192) {
     binary += String.fromCharCode(...bytes.subarray(offset, offset + 8192))
   }
 
-  const filename = `SKV-2027-membership-${membership.id.replace(/[^a-zA-Z0-9-]/g, '-')}.pdf`
-  await createMembershipPdf(membership, btoa(binary)).save(filename, { returnPromise: true })
+  const filename = `${membership.registrationNumber.replace(/[^a-zA-Z0-9-]/g, '-')}-membership.pdf`
+  await createMembershipPdf(membership, btoa(binary), photo).save(filename, { returnPromise: true })
 }

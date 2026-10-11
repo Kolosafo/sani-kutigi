@@ -1,5 +1,7 @@
 export type MembershipRegistration = {
   id: string
+  registrationNumber: string
+  passportPhotoUrl: string | null
   name: string
   email: string
   phone: string
@@ -9,13 +11,26 @@ export type MembershipRegistration = {
   createdAt: string
 }
 
-export const MEMBERSHIP_CARD_FIELDS = 'id, name, email, phone, lga, ward, occupation, created_at'
+export const PASSPORT_PHOTO_MAX_BYTES = 2 * 1024 * 1024
+export const PASSPORT_PHOTO_TYPES = ['image/jpeg', 'image/png']
 
-type MembershipSubmission = Omit<MembershipRegistration, 'createdAt'> & { created_at: string }
+export const MEMBERSHIP_CARD_FIELDS =
+  'id, registration_number, passport_photo_path, name, email, phone, lga, ward, occupation, created_at'
 
-export function toMembershipRegistration(submission: MembershipSubmission): MembershipRegistration {
+type MembershipSubmission = Omit<MembershipRegistration, 'createdAt' | 'registrationNumber' | 'passportPhotoUrl'> & {
+  created_at: string
+  registration_number: number | string
+  passport_photo_path: string
+}
+
+export function toMembershipRegistration(
+  submission: MembershipSubmission,
+  passportPhotoUrl: string | null = null,
+): MembershipRegistration {
   return {
     id: submission.id,
+    registrationNumber: `SKV-2027-${String(submission.registration_number).padStart(6, '0')}`,
+    passportPhotoUrl,
     name: submission.name,
     email: submission.email,
     phone: submission.phone,
@@ -31,7 +46,7 @@ export const MEMBERSHIP_REVIEW_NOTICE =
 
 export function getMembershipDetails(membership: MembershipRegistration) {
   return [
-    { label: 'Registration reference', value: membership.id },
+    { label: 'Registration number', value: membership.registrationNumber },
     {
       label: 'Registration date',
       value: new Intl.DateTimeFormat('en-NG', {
