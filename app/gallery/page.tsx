@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 
 const photos = [
   {
@@ -46,6 +47,21 @@ export default function GalleryPage() {
           <p className="text-gray-500 mt-3 text-base">
             Photos and materials from the Sani Kutigi senatorial campaign.
           </p>
+        </div>
+
+        <div className="mb-10 flex flex-col items-start justify-between gap-4 rounded-2xl border border-green-200 bg-green-50 p-5 sm:flex-row sm:items-center sm:p-6">
+          <div>
+            <h2 className="text-lg font-bold text-green-900">Make your photos campaign-ready</h2>
+            <p className="mt-1 text-sm leading-relaxed text-green-800">
+              Add the SKV Media &amp; Publicity Crew watermark to your photos and download them for sharing.
+            </p>
+          </div>
+          <Link
+            href="/watermark"
+            className="shrink-0 rounded-xl bg-green-700 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
+          >
+            Watermark Photos
+          </Link>
         </div>
 
         <div className="columns-1 sm:columns-2 lg:columns-3 gap-5 space-y-5">

@@ -77,6 +77,7 @@ export default function RootLayout({
                     { href: '/', label: 'Home' },
                     { href: '/about', label: 'About SKV' },
                     { href: '/gallery', label: 'Gallery' },
+                    { href: '/watermark', label: 'Watermark Photos' },
                     { href: '/join', label: 'Join the Vanguard' },
                   ].map(({ href, label }) => (
                     <li key={href}>

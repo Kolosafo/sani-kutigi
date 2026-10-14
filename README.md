@@ -19,6 +19,14 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). Use `npm run lint` and `npm run build` to check changes.
 
+## Photo watermarking
+
+Members can open `/watermark` from **Watermark Photos** in the navigation or campaign gallery. Choose or drop one JPG, PNG or WebP photo (up to 20 MiB), preview the result, adjust the two logo sizes, and download PNG or JPG.
+
+The editor places `public/overlay-watermark-main.png` at the top right and `public/overlay-watermark-shadow.png` in the center. The shadow asset already contains approximately 30% opacity, so it is drawn without further fading. Both assets use a shared artwork crop to remove transparent padding and preserve alignment. If the artwork bounds change, update `ARTWORK` in `lib/watermark.ts`.
+
+Photos are processed locally using browser canvas; they are not uploaded or stored. Original proportions are preserved. Large photos are reduced to a maximum 4096-pixel edge and approximately 12 megapixels for reliable export on phones; photos over 64 megapixels are rejected. The preview displays the download dimensions. PNG preserves transparency; JPG uses a white background for transparent areas.
+
 ## Supabase setup
 
 For a **new project**, run [supabase/schema.sql](supabase/schema.sql) in the Supabase dashboard SQL Editor, then run [supabase/migrations/202610110001_membership_registration_details.sql](supabase/migrations/202610110001_membership_registration_details.sql).

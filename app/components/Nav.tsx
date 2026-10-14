@@ -10,6 +10,7 @@ const links = [
   { href: '/about', label: 'About SKV' },
   { href: '/executives', label: 'Executives' },
   { href: '/gallery', label: 'Gallery' },
+  { href: '/watermark', label: 'Watermark Photos' },
   { href: '/join', label: 'Join Us' },
   { href: '/membership', label: 'Download Membership' },
   { href: '/inquiry', label: 'Inquiry' },
@@ -23,7 +24,7 @@ export default function Nav() {
 
   return (
     <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-20">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3">
+      <div className="max-w-[1440px] mx-auto flex items-center justify-between gap-4 px-4 sm:px-6 py-3">
 
         {/* Brand */}
         <Link href="/" className="flex items-center gap-3 shrink-0">
@@ -46,7 +47,7 @@ export default function Nav() {
             <Link
               key={href}
               href={href}
-              className={`whitespace-nowrap px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`whitespace-nowrap px-2 py-2 rounded-lg text-sm font-medium transition-colors ${
                 pathname === href
                   ? 'bg-green-700 text-white'
                   : 'text-gray-600 hover:text-green-700 hover:bg-green-50'
