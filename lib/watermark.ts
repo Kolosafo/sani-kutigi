@@ -84,6 +84,15 @@ export async function loadWatermarkPhoto(file: File): Promise<WatermarkPhoto> {
   }
 }
 
+export function releaseWatermarkPhoto(photo: WatermarkPhoto) {
+  if ('getContext' in photo.image) {
+    photo.image.width = 0
+    photo.image.height = 0
+  } else {
+    photo.image.src = ''
+  }
+}
+
 export function drawWatermarkedPhoto(
   canvas: HTMLCanvasElement,
   photo: WatermarkPhoto,
@@ -127,7 +136,7 @@ export function getWatermarkedFilename(name: string, format: DownloadFormat) {
   return `${base}-skv-watermarked.${format === 'jpeg' ? 'jpg' : 'png'}`
 }
 
-export async function downloadWatermarkedPhoto(
+export async function createWatermarkedPhotoBlob(
   photo: WatermarkPhoto,
   assets: WatermarkAssets,
   sizes: WatermarkSizes,
@@ -136,23 +145,39 @@ export async function downloadWatermarkedPhoto(
   const canvas = document.createElement('canvas')
   try {
     drawWatermarkedPhoto(canvas, photo, assets, sizes, format)
-    const blob = await new Promise<Blob>((resolve, reject) => {
+    return await new Promise<Blob>((resolve, reject) => {
       canvas.toBlob((result) => {
         if (result) resolve(result)
         else reject(new Error('Unable to save this image. Please try a smaller photo.'))
       }, `image/${format}`, 0.94)
     })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = getWatermarkedFilename(photo.name, format)
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    // Let the browser start the download before releasing its URL.
-    window.setTimeout(() => URL.revokeObjectURL(url), 60_000)
   } finally {
     canvas.width = 0
     canvas.height = 0
   }
+}
+
+export function saveWatermarkDownload(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  try {
+    link.click()
+  } finally {
+    link.remove()
+    // Let the browser start the download before releasing its URL.
+    window.setTimeout(() => URL.revokeObjectURL(url), 60_000)
+  }
+}
+
+export async function downloadWatermarkedPhoto(
+  photo: WatermarkPhoto,
+  assets: WatermarkAssets,
+  sizes: WatermarkSizes,
+  format: DownloadFormat,
+) {
+  const blob = await createWatermarkedPhotoBlob(photo, assets, sizes, format)
+  saveWatermarkDownload(blob, getWatermarkedFilename(photo.name, format))
 }

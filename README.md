@@ -21,7 +21,11 @@ Open [http://localhost:3000](http://localhost:3000). Use `npm run lint` and `npm
 
 ## Photo watermarking
 
-Members can open `/watermark` from **Watermark Photos** in the navigation or campaign gallery. Choose or drop one JPG, PNG or WebP photo (up to 20 MiB), preview the result, adjust the two logo sizes, and download PNG or JPG.
+The watermark tool is available only through the direct `/watermark` URL. It has no navigation, footer or gallery links, and asks search engines not to index it. This makes it unlisted; it does not require a password or restrict who can open a shared link.
+
+Choose or drop up to 30 JPG, PNG or WebP photos (20 MiB per photo, 200 MiB combined). The standard watermark positions and sizes apply automatically to every photo. The optional adjustments panel starts collapsed, and any size changes apply to the whole batch. Photos retain their original proportions rather than being cropped to a common portrait shape.
+
+Preview each photo using the file list or previous/next buttons. Download an individual photo, or download all photos together in one ZIP. JPG is the default for sharing; PNG is also available. The batch processes one image at a time, reports progress, supports cancellation, and lists unreadable photos that were skipped. Duplicate output filenames receive numeric suffixes so no photos are overwritten. ZIP output is limited to 256 MiB; use JPG or a smaller batch if needed.
 
 The editor places `public/overlay-watermark-main.png` at the top right and `public/overlay-watermark-shadow.png` in the center. The shadow asset already contains approximately 30% opacity, so it is drawn without further fading. Both assets use a shared artwork crop to remove transparent padding and preserve alignment. If the artwork bounds change, update `ARTWORK` in `lib/watermark.ts`.
 

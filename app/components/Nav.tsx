@@ -10,7 +10,6 @@ const links = [
   { href: '/about', label: 'About SKV' },
   { href: '/executives', label: 'Executives' },
   { href: '/gallery', label: 'Gallery' },
-  { href: '/watermark', label: 'Watermark Photos' },
   { href: '/join', label: 'Join Us' },
   { href: '/membership', label: 'Download Membership' },
   { href: '/inquiry', label: 'Inquiry' },
