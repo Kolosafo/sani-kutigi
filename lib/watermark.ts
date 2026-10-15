@@ -3,7 +3,7 @@ const MAX_SOURCE_PIXELS = 64_000_000
 const MAX_OUTPUT_PIXELS = 12_000_000
 const MAX_OUTPUT_EDGE = 4096
 
-export const DEFAULT_WATERMARK_SIZES = { main: 22, shadow: 65 }
+export const DEFAULT_WATERMARK_SIZES = { main: 22, shadow: 30 }
 
 export type WatermarkSizes = typeof DEFAULT_WATERMARK_SIZES
 export type DownloadFormat = 'png' | 'jpeg'
@@ -16,8 +16,43 @@ export type WatermarkPhoto = {
   resized: boolean
 }
 
-// Both supplied PNGs have the same transparent padding and artwork bounds.
-const ARTWORK = { x: 280, y: 153, width: 729, height: 599 }
+type ArtworkBounds = { x: number; y: number; width: number; height: number }
+const artworkBounds = new WeakMap<HTMLImageElement, ArtworkBounds>()
+
+function getArtworkBounds(image: HTMLImageElement): ArtworkBounds {
+  const cached = artworkBounds.get(image)
+  if (cached) return cached
+
+  const canvas = document.createElement('canvas')
+  canvas.width = image.naturalWidth
+  canvas.height = image.naturalHeight
+  try {
+    const context = canvas.getContext('2d', { willReadFrequently: true })
+    if (!context) throw new Error('Your browser could not prepare the watermark.')
+    context.drawImage(image, 0, 0)
+    const { data } = context.getImageData(0, 0, canvas.width, canvas.height)
+    let left = canvas.width
+    let top = canvas.height
+    let right = -1
+    let bottom = -1
+    for (let y = 0; y < canvas.height; y++) {
+      for (let x = 0; x < canvas.width; x++) {
+        if (data[(y * canvas.width + x) * 4 + 3] === 0) continue
+        left = Math.min(left, x)
+        top = Math.min(top, y)
+        right = Math.max(right, x)
+        bottom = Math.max(bottom, y)
+      }
+    }
+    if (right < left || bottom < top) throw new Error('The watermark image is empty.')
+    const bounds = { x: left, y: top, width: right - left + 1, height: bottom - top + 1 }
+    artworkBounds.set(image, bounds)
+    return bounds
+  } finally {
+    canvas.width = 0
+    canvas.height = 0
+  }
+}
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -33,6 +68,8 @@ export async function loadWatermarkAssets(): Promise<WatermarkAssets> {
     loadImage('/overlay-watermark-main.png'),
     loadImage('/overlay-watermark-shadow.png'),
   ])
+  getArtworkBounds(main)
+  getArtworkBounds(shadow)
   return { main, shadow }
 }
 
@@ -117,13 +154,15 @@ export function drawWatermarkedPhoto(
   context.drawImage(photo.image, 0, 0, width, height)
 
   const margin = Math.min(width, height) * 0.035
-  const aspect = ARTWORK.width / ARTWORK.height
   const drawMark = (image: HTMLImageElement, size: number, centered: boolean) => {
-    const markWidth = Math.min(width * size / 100, width - 2 * margin, (height - 2 * margin) * aspect)
+    const artwork = getArtworkBounds(image)
+    const aspect = artwork.width / artwork.height
+    const sizeReference = centered ? Math.min(width, height) : width
+    const markWidth = Math.min(sizeReference * size / 100, width - 2 * margin, (height - 2 * margin) * aspect)
     const markHeight = markWidth / aspect
     const x = centered ? (width - markWidth) / 2 : width - margin - markWidth
     const y = centered ? (height - markHeight) / 2 : margin
-    context.drawImage(image, ARTWORK.x, ARTWORK.y, ARTWORK.width, ARTWORK.height, x, y, markWidth, markHeight)
+    context.drawImage(image, artwork.x, artwork.y, artwork.width, artwork.height, x, y, markWidth, markHeight)
   }
 
   // The shadow PNG already contains approximately 30% alpha. Do not fade it again.
