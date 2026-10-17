@@ -165,6 +165,50 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Community learning ── */}
+      <section aria-labelledby="learning-heading" className="py-16 sm:py-20 px-6 bg-linear-to-br from-green-50 via-white to-blue-50">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+          <div>
+            <p className="text-green-700 text-sm font-semibold uppercase tracking-widest mb-3">Community Learning</p>
+            <h2 id="learning-heading" className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
+              Build skills for your next step.
+            </h2>
+            <p className="text-gray-600 text-base leading-relaxed mb-6">
+              A stronger community starts with opportunities to learn. Explore free online
+              tech courses and learning resources, find a direction that interests you,
+              and take your first step at your own pace.
+            </p>
+            <Link
+              href="/courses"
+              className="inline-flex items-center gap-3 bg-green-700 text-white font-bold px-7 py-3 rounded-full hover:bg-green-800 transition-colors text-sm shadow-sm"
+            >
+              Explore Free Tech Courses <span aria-hidden="true">&rarr;</span>
+            </Link>
+          </div>
+          <div className="bg-white rounded-3xl border border-blue-100 shadow-sm p-6 sm:p-8">
+            <p className="text-blue-700 text-xs font-bold uppercase tracking-widest mb-3">Make Learning a Habit</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-6">One skill. A practical place to begin.</h3>
+            <ol className="space-y-5">
+              {[
+                { title: 'Choose your direction', text: 'Find a skill that matches your interests and the work you want to do.' },
+                { title: 'Follow a learning path', text: 'Start with the foundations and make time to learn a little each week.' },
+                { title: 'Put it into practice', text: 'Use what you learn to create something useful for yourself or your community.' },
+              ].map(({ title, text }, index) => (
+                <li key={title} className="flex items-start gap-4">
+                  <span aria-hidden="true" className="flex items-center justify-center shrink-0 w-9 h-9 rounded-full bg-blue-50 text-blue-700 font-bold text-sm">
+                    {index + 1}
+                  </span>
+                  <div>
+                    <h4 className="font-bold text-gray-900 text-sm mb-1">{title}</h4>
+                    <p className="text-gray-600 text-sm leading-relaxed">{text}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </section>
+
       {/* ── About / Flier ── */}
       <section className="py-16 sm:py-20 px-6 bg-white">
         <div className="max-w-6xl mx-auto">

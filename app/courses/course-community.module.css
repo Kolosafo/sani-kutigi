@@ -1,0 +1,60 @@
+.community {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  border: 1px solid #bbf7d0;
+  border-radius: 1.25rem;
+  background: #f0fdf4;
+  padding: 1.75rem;
+  color: #14532d;
+}
+
+.icon {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 1rem;
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.icon svg { width: 1.6rem; height: 1.6rem; }
+.copy { flex: 1; min-width: 0; }
+.eyebrow { color: #166534; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.copy h2 { margin-top: 0.4rem; font-size: 1.2rem; font-weight: 800; line-height: 1.35; letter-spacing: -0.02em; }
+.copy > p:last-child { max-width: 40rem; margin-top: 0.5rem; color: #4b5563; font-size: 0.85rem; line-height: 1.75; }
+
+.joinLink {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 2.875rem;
+  border-radius: 999px;
+  background: #15803d;
+  padding: 0.8rem 1.25rem;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.joinLink:hover { background: #166534; }
+.joinLink:focus-visible { outline: 3px solid #2563eb; outline-offset: 4px; }
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+
+@media (max-width: 900px) {
+  .community { flex-wrap: wrap; gap: 1rem; }
+  .copy { flex-basis: calc(100% - 4rem); }
+  .joinLink { margin-left: 4rem; }
+}
+
+@media (max-width: 540px) {
+  .community { padding: 1.25rem; }
+  .icon { display: none; }
+  .copy { flex-basis: 100%; }
+  .joinLink { width: 100%; margin-left: 0; }
+}

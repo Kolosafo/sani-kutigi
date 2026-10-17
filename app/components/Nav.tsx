@@ -10,6 +10,7 @@ const links = [
   { href: '/about', label: 'About SKV' },
   { href: '/executives', label: 'Executives' },
   { href: '/gallery', label: 'Gallery' },
+  { href: '/courses', label: 'Courses' },
   { href: '/join', label: 'Join Us' },
   { href: '/membership', label: 'Download Membership' },
   { href: '/inquiry', label: 'Inquiry' },
@@ -20,6 +21,8 @@ const links = [
 export default function Nav() {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const isActive = (href: string) =>
+    pathname === href || (href !== '/' && pathname.startsWith(`${href}/`))
 
   return (
     <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-20">
@@ -41,13 +44,14 @@ export default function Nav() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden xl:flex items-center gap-0.5">
+        <nav aria-label="Main navigation" className="hidden xl:flex items-center gap-0.5">
           {links.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
+              aria-current={pathname === href ? 'page' : undefined}
               className={`whitespace-nowrap px-2 py-2 rounded-lg text-sm font-medium transition-colors ${
-                pathname === href
+                isActive(href)
                   ? 'bg-green-700 text-white'
                   : 'text-gray-600 hover:text-green-700 hover:bg-green-50'
               }`}
@@ -62,6 +66,8 @@ export default function Nav() {
           className="xl:hidden p-2 rounded-lg text-gray-600 hover:bg-green-50 transition-colors"
           onClick={() => setMobileOpen((o) => !o)}
           aria-label="Toggle navigation"
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-navigation"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
             {mobileOpen
@@ -77,15 +83,16 @@ export default function Nav() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="xl:hidden border-t border-gray-100 bg-white px-4 pb-4">
-          <nav className="flex flex-col gap-1 mt-2">
+        <div id="mobile-navigation" className="xl:hidden max-h-[calc(100dvh-12rem)] overflow-y-auto border-t border-gray-100 bg-white px-4 pb-4">
+          <nav aria-label="Main navigation" className="flex flex-col gap-1 mt-2">
             {links.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
+                aria-current={pathname === href ? 'page' : undefined}
                 onClick={() => setMobileOpen(false)}
                 className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                  pathname === href
+                  isActive(href)
                     ? 'bg-green-700 text-white'
                     : 'text-gray-700 hover:bg-green-50 hover:text-green-700'
                 }`}

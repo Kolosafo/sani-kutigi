@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 import Nav from "./components/Nav";
 
@@ -77,10 +78,11 @@ export default function RootLayout({
                     { href: '/', label: 'Home' },
                     { href: '/about', label: 'About SKV' },
                     { href: '/gallery', label: 'Gallery' },
+                    { href: '/courses', label: 'Free Tech Courses' },
                     { href: '/join', label: 'Join the Vanguard' },
                   ].map(({ href, label }) => (
                     <li key={href}>
-                      <a href={href} className="hover:text-green-400 transition-colors">{label}</a>
+                      <Link href={href} className="hover:text-green-400 transition-colors">{label}</Link>
                     </li>
                   ))}
                 </ul>

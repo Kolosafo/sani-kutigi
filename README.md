@@ -1,6 +1,6 @@
 # Sani Kutigi Vanguard
 
-Next.js application for membership registration, membership cards, inquiries, complaints, and suggestions.
+Next.js application for community learning, membership registration, membership cards, inquiries, complaints, and suggestions.
 
 ## Local development
 
@@ -18,6 +18,12 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000). Use `npm run lint` and `npm run build` to check changes.
+
+## Free tech courses
+
+The public `/courses` library is linked from the homepage, navigation and footer. Visitors can search skills and providers, combine coding/no-code and field filters, and open staged learning paths at `/courses/[slug]`. No membership or account on this site is needed.
+
+Maintain the course catalog in `lib/skills.ts`. Each skill has a unique slug, learning outcomes, related skill slugs, and resources grouped into `Start here`, `Build depth`, and `Practice & prove it`. Counts and categories are derived from the data, and detail pages are generated during the build. Keep resource links current and distinguish free learning materials from paid certificates, exams, tools or optional services.
 
 ## Photo watermarking
 
