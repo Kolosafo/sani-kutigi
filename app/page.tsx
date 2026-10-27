@@ -112,6 +112,42 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Birthday appreciation ── */}
+      <section aria-labelledby="birthday-appreciation-heading" className="bg-linear-to-br from-amber-50 via-white to-green-50 px-6 py-16 sm:py-20">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 items-center gap-10 lg:gap-16">
+          <div className="text-center lg:text-left">
+            <p className="text-green-700 text-sm font-semibold uppercase tracking-widest mb-3">A Message of Thanks</p>
+            <h2 id="birthday-appreciation-heading" className="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight mb-5">
+              54th Birthday Appreciation
+            </h2>
+            <p className="text-xl sm:text-2xl font-semibold text-green-800 leading-snug max-w-xl mx-auto lg:mx-0">
+              Your Prayers, Love and Gifts Are Deeply Appreciated.
+            </p>
+            <div className="w-16 h-1 bg-amber-500 rounded-full my-7 mx-auto lg:mx-0" aria-hidden="true" />
+            <p className="text-gray-700 font-semibold">SLK Media &amp; Publicity Crew</p>
+            <p className="text-gray-600 mt-1">for Hon. Mohammed Sani Idris Legbo Kutigi</p>
+            <a
+              href="/54th-birthday-appreciation.jpeg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 mt-8 rounded-full bg-green-800 px-7 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-green-900"
+            >
+              View the full appreciation message <span aria-hidden="true">&rarr;</span>
+            </a>
+          </div>
+          <div className="w-full max-w-sm mx-auto lg:mr-0">
+            <Image
+              src="/54th-birthday-appreciation.jpeg"
+              alt="54th birthday appreciation poster from Hon. Mohammed Sani Idris Legbo Kutigi, thanking everyone for their prayers, love, gifts and support"
+              width={720}
+              height={1079}
+              sizes="(max-width: 1023px) min(100vw - 3rem, 384px), 384px"
+              className="w-full h-auto rounded-2xl shadow-xl ring-1 ring-amber-100"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* ── Countdown ── */}
       <section id="countdown" className="relative scroll-mt-32 py-16 sm:py-20 px-6 bg-white overflow-hidden">
         <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-full sm:w-1/2 lg:w-2/5">

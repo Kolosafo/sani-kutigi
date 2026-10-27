@@ -2,6 +2,13 @@ import Image from 'next/image'
 
 const photos = [
   {
+    src: '/54th-birthday-appreciation.jpeg',
+    alt: '54th birthday appreciation message from Hon. Mohammed Sani Idris Legbo Kutigi',
+    caption: '54th Birthday Appreciation',
+    width: 720,
+    height: 1079,
+  },
+  {
     src: '/face-cap.jpeg',
     alt: 'Sani Kutigi – Senatorial Candidate',
     caption: 'Sani Kutigi, APC Candidate',
