@@ -14,7 +14,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sanikutigi.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "SKV 2027 | Sani Kutigi Vanguard – Niger State South",
   description:
     "Official campaign website of The Sani Kutigi Vanguard (SKV 2027) — supporting Distinguished Mohammed Sani Idris Legbo Kutigi for the Niger State South Senatorial seat under the All Progressive Congress.",

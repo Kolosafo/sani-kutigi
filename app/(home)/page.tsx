@@ -1,8 +1,28 @@
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import CountdownTimer from './components/CountdownTimer'
-import ExecutiveCard from './components/ExecutiveCard'
+import CountdownTimer from '../components/CountdownTimer'
+import ExecutiveCard from '../components/ExecutiveCard'
 import { executives, registration } from '@/lib/executives'
+
+const birthdayTitle = '54th Birthday Appreciation'
+const birthdayDescription =
+  'Your Prayers, Love and Gifts Are Deeply Appreciated. A message of thanks from Hon. Mohammed Sani Idris Legbo Kutigi.'
+
+export const metadata: Metadata = {
+  title: birthdayTitle,
+  description: birthdayDescription,
+  openGraph: {
+    title: birthdayTitle,
+    description: birthdayDescription,
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: birthdayTitle,
+    description: birthdayDescription,
+  },
+}
 
 const aims = [
   { icon: '🏛️', text: 'Support and promote the leadership vision of Distinguished Mohammed Sani Idris Legbo Kutigi.' },

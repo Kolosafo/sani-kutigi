@@ -13,6 +13,8 @@ SUPABASE_SECRET_KEY=your-server-only-supabase-secret-key
 
 Keep the secret key on the server. Configure the same variables on your deployment platform.
 
+Social link previews use `https://sanikutigi.com` for their image URLs. Set `NEXT_PUBLIC_SITE_URL` to a different public origin when deploying the site elsewhere.
+
 ```bash
 npm run dev
 ```
