@@ -17,6 +17,7 @@ export type WatermarkBatchProgress = { completed: number; total: number; name: s
 export type WatermarkArchiveOptions = {
   signal?: AbortSignal
   onProgress?: (progress: WatermarkBatchProgress) => void
+  filenameSuffix?: string
 }
 
 export function validateWatermarkBatch(files: readonly File[]): void {
@@ -33,8 +34,8 @@ function checkCancelled(signal?: AbortSignal): void {
   if (signal?.aborted) throw new DOMException('Photo processing was cancelled.', 'AbortError')
 }
 
-function uniqueFilename(name: string, format: DownloadFormat, used: Set<string>): string {
-  const original = getWatermarkedFilename(name, format)
+function uniqueFilename(name: string, format: DownloadFormat, used: Set<string>, filenameSuffix?: string): string {
+  const original = getWatermarkedFilename(name, format, filenameSuffix)
   const dot = original.lastIndexOf('.')
   const base = original.slice(0, dot)
   const extension = original.slice(dot)
@@ -104,7 +105,7 @@ export async function buildWatermarkedArchive(
         const data = new Uint8Array(await encoded.arrayBuffer())
         checkCancelled(options.signal)
         // Keep ZIP errors outside the per-photo catch: a damaged archive is unusable.
-        const entry = new ZipPassThrough(uniqueFilename(file.name, format, names))
+        const entry = new ZipPassThrough(uniqueFilename(file.name, format, names, options.filenameSuffix))
         zip.add(entry)
         if (zipError) throw zipError
         entry.push(data, true)

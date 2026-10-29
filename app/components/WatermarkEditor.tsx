@@ -18,7 +18,9 @@ function PhotoIcon({ className = 'h-8 w-8' }: { className?: string }) {
   return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3" /><circle cx="8.5" cy="8.5" r="1.5" /><path strokeLinecap="round" strokeLinejoin="round" d="m21 15-5-5L6 21M3 16l4-4 3 3" /></svg>
 }
 
-export default function WatermarkEditor() {
+export default function WatermarkEditor({ variant = 'skv' }: { variant?: 'skv' | 'lavun' }) {
+  const isLavun = variant === 'lavun'
+  const filenameSuffix = isLavun ? 'lavun-watermarked' : 'skv-watermarked'
   const inputRef = useRef<HTMLInputElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const nextId = useRef(0)
@@ -48,13 +50,17 @@ export default function WatermarkEditor() {
 
   useEffect(() => {
     let cancelled = false
-    loadWatermarkAssets().then((loaded) => {
+    loadWatermarkAssets(isLavun ? {
+      main: '/lavun-watermark-overlay.png',
+      shadow: '/lavun-watermark-overlay.png',
+      shadowOpacity: 0.3,
+    } : undefined).then((loaded) => {
       if (!cancelled) setAssets(loaded)
     }).catch(() => {
       if (!cancelled) setAssetError('The watermark images could not be loaded. Check your connection and try again.')
     })
     return () => { cancelled = true }
-  }, [assetAttempt])
+  }, [assetAttempt, isLavun])
 
   useEffect(() => {
     return () => {
@@ -133,16 +139,17 @@ export default function WatermarkEditor() {
       if (all && photos.length > 1) {
         const result = await buildWatermarkedArchive(photos.map((item) => item.file), assets, sizes, format, {
           signal: controller.signal,
+          filenameSuffix,
           onProgress: (value) => { if (!controller.signal.aborted) setProgress(value) },
         })
         if (controller.signal.aborted) throw new DOMException('Download cancelled.', 'AbortError')
-        saveWatermarkDownload(result.blob, 'skv-watermarked-photos.zip')
+        saveWatermarkDownload(result.blob, `${filenameSuffix}-photos.zip`)
         setFailed(result.failed)
         setStatus(`${result.exported} ${result.exported === 1 ? 'watermarked photo is' : 'watermarked photos are'} ready in your ZIP download.${result.failed.length ? ` ${result.failed.length} could not be processed; see the list below.` : ''}`)
       } else if (photo && !previewError) {
         const blob = await createWatermarkedPhotoBlob(photo, assets, sizes, format)
         if (controller.signal.aborted) throw new DOMException('Download cancelled.', 'AbortError')
-        saveWatermarkDownload(blob, getWatermarkedFilename(photo.name, format))
+        saveWatermarkDownload(blob, getWatermarkedFilename(photo.name, format, filenameSuffix))
         setStatus('Your watermarked photo is ready. Check your downloads.')
       }
     } catch (downloadError) {
@@ -189,7 +196,7 @@ export default function WatermarkEditor() {
             </ul>
           </div>}
 
-          <div className="mt-5 rounded-xl border border-green-100 bg-green-50 p-4"><h3 className="text-sm font-bold text-green-900">Watermarks applied automatically</h3><p className="mt-1.5 text-xs leading-relaxed text-green-800">White logo at the top right. Subtle logo in the center. The same proportions and opacity apply to every photo.</p></div>
+          <div className="mt-5 rounded-xl border border-green-100 bg-green-50 p-4"><h3 className="text-sm font-bold text-green-900">Watermarks applied automatically</h3><p className="mt-1.5 text-xs leading-relaxed text-green-800">White {isLavun ? 'Lavun LGA' : 'SKV'} logo at the top right. Subtle logo in the center. The same proportions and opacity apply to every photo.</p></div>
           <details className="mt-4 rounded-xl border border-gray-200">
             <summary className="cursor-pointer rounded-xl px-4 py-3 text-sm font-semibold text-gray-700 focus-visible:outline-2 focus-visible:outline-green-700">Optional watermark adjustments</summary>
             <fieldset disabled={!photos.length || downloading} className="border-t border-gray-100 p-4 disabled:opacity-50">
@@ -216,7 +223,7 @@ export default function WatermarkEditor() {
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 px-5 py-4 sm:px-6"><div className="flex items-center gap-3"><span className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-sm font-bold text-green-800">2</span><h2 id="preview-heading" className="text-lg font-extrabold">Your preview</h2></div>{ready && <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">Watermarks ready</span>}</div>
           {selected && <div className="flex items-center justify-between gap-3 border-b border-gray-100 px-5 py-3 text-xs text-gray-600 sm:px-6"><p className="min-w-0 truncate" title={selected.file.name}>{selectedIndex + 1} of {photos.length} · {selected.file.name}</p><div className="flex shrink-0 gap-2"><button type="button" disabled={selectedIndex === 0 || downloading} onClick={() => setSelectedId(photos[selectedIndex - 1].id)} aria-label="Preview previous photo" className="rounded-md border border-gray-200 px-2 py-1 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-green-700 disabled:opacity-40">←</button><button type="button" disabled={selectedIndex === photos.length - 1 || downloading} onClick={() => setSelectedId(photos[selectedIndex + 1].id)} aria-label="Preview next photo" className="rounded-md border border-gray-200 px-2 py-1 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-green-700 disabled:opacity-40">→</button></div></div>}
           <div className="flex min-h-80 items-center justify-center bg-gray-100 p-4 sm:min-h-[480px] sm:p-6" style={{ backgroundImage: 'conic-gradient(#e5e7eb 25%, #f3f4f6 0 50%, #e5e7eb 0 75%, #f3f4f6 0)', backgroundSize: '20px 20px' }}>
-            {photo && assets ? <canvas ref={canvasRef} role="img" aria-label="Your photo with the white SKV logo in the top right and a subtle watermark centered on the image" className="block h-auto max-h-[600px] w-auto max-w-full rounded-sm object-contain shadow-lg" /> : <div className="max-w-xs rounded-2xl bg-white/90 p-7 text-center"><PhotoIcon className="mx-auto mb-4 h-12 w-12 text-gray-400" /><p className="font-bold text-gray-700">{loading ? 'Opening your photo…' : previewError ? 'This photo could not be opened' : photo ? assetError ? 'Watermark unavailable' : 'Loading the watermark…' : 'Your photos will appear here'}</p><p className="mt-2 text-sm leading-relaxed text-gray-500">{previewError ? 'Remove it or choose another photo. Other valid photos can still be downloaded.' : selected ? 'Your preview will be ready shortly.' : 'Choose one or more photos. Both watermark layers are added automatically.'}</p></div>}
+            {photo && assets ? <canvas ref={canvasRef} role="img" aria-label={`Your photo with the white ${isLavun ? 'Lavun LGA' : 'SKV'} logo in the top right and a subtle watermark centered on the image`} className="block h-auto max-h-[600px] w-auto max-w-full rounded-sm object-contain shadow-lg" /> : <div className="max-w-xs rounded-2xl bg-white/90 p-7 text-center"><PhotoIcon className="mx-auto mb-4 h-12 w-12 text-gray-400" /><p className="font-bold text-gray-700">{loading ? 'Opening your photo…' : previewError ? 'This photo could not be opened' : photo ? assetError ? 'Watermark unavailable' : 'Loading the watermark…' : 'Your photos will appear here'}</p><p className="mt-2 text-sm leading-relaxed text-gray-500">{previewError ? 'Remove it or choose another photo. Other valid photos can still be downloaded.' : selected ? 'Your preview will be ready shortly.' : 'Choose one or more photos. Both watermark layers are added automatically.'}</p></div>}
           </div>
           <div className="px-5 py-4 sm:px-6">{previewError && <p role="alert" className="mb-3 text-sm text-red-700">{previewError}</p>}{photo ? <><p className="text-sm font-medium text-gray-700">Download size: {photo.width.toLocaleString()} × {photo.height.toLocaleString()} px</p><p className="mt-1 text-xs leading-relaxed text-gray-500">{photo.resized ? 'This large photo is resized for reliable downloads on phones. Its proportions are preserved.' : 'Your photo keeps its original dimensions and proportions.'} {format === 'jpeg' ? 'Transparent areas use a white background in JPG.' : 'PNG preserves transparent areas.'}</p></> : <p className="text-xs leading-relaxed text-gray-500">Consistent placement on every photo. Your original files stay unchanged.</p>}</div>
         </section>

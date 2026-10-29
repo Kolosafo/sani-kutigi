@@ -7,7 +7,8 @@ export const DEFAULT_WATERMARK_SIZES = { main: 22, shadow: 30 }
 
 export type WatermarkSizes = typeof DEFAULT_WATERMARK_SIZES
 export type DownloadFormat = 'png' | 'jpeg'
-export type WatermarkAssets = { main: HTMLImageElement; shadow: HTMLImageElement }
+export type WatermarkAssets = { main: HTMLImageElement; shadow: HTMLImageElement; shadowOpacity: number }
+export type WatermarkAssetSources = { main: string; shadow: string; shadowOpacity?: number }
 export type WatermarkPhoto = {
   image: HTMLImageElement | HTMLCanvasElement
   name: string
@@ -63,14 +64,17 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   })
 }
 
-export async function loadWatermarkAssets(): Promise<WatermarkAssets> {
+export async function loadWatermarkAssets(sources: WatermarkAssetSources = {
+  main: '/overlay-watermark-main.png',
+  shadow: '/overlay-watermark-shadow.png',
+}): Promise<WatermarkAssets> {
   const [main, shadow] = await Promise.all([
-    loadImage('/overlay-watermark-main.png'),
-    loadImage('/overlay-watermark-shadow.png'),
+    loadImage(sources.main),
+    loadImage(sources.shadow),
   ])
   getArtworkBounds(main)
   getArtworkBounds(shadow)
-  return { main, shadow }
+  return { main, shadow, shadowOpacity: sources.shadowOpacity ?? 1 }
 }
 
 export async function loadWatermarkPhoto(file: File): Promise<WatermarkPhoto> {
@@ -165,14 +169,16 @@ export function drawWatermarkedPhoto(
     context.drawImage(image, artwork.x, artwork.y, artwork.width, artwork.height, x, y, markWidth, markHeight)
   }
 
-  // The shadow PNG already contains approximately 30% alpha. Do not fade it again.
+  // The original SKV shadow PNG already contains approximately 30% alpha.
+  context.globalAlpha = assets.shadowOpacity
   drawMark(assets.shadow, sizes.shadow, true)
+  context.globalAlpha = 1
   drawMark(assets.main, sizes.main, false)
 }
 
-export function getWatermarkedFilename(name: string, format: DownloadFormat) {
+export function getWatermarkedFilename(name: string, format: DownloadFormat, suffix = 'skv-watermarked') {
   const base = name.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80) || 'photo'
-  return `${base}-skv-watermarked.${format === 'jpeg' ? 'jpg' : 'png'}`
+  return `${base}-${suffix}.${format === 'jpeg' ? 'jpg' : 'png'}`
 }
 
 export async function createWatermarkedPhotoBlob(

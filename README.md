@@ -29,13 +29,15 @@ Maintain the course catalog in `lib/skills.ts`. Each skill has a unique slug, le
 
 ## Photo watermarking
 
-The watermark tool is available only through the direct `/watermark` URL. It has no navigation, footer or gallery links, and asks search engines not to index it. This makes it unlisted; it does not require a password or restrict who can open a shared link.
+The SKV watermark tool is available only through the direct `/watermark` URL. It has no navigation, footer or gallery links, and asks search engines not to index it. This makes it unlisted; it does not require a password or restrict who can open a shared link.
+
+The Lavun LGA version is available at the direct `/lavun-watermark` URL with the same unlisted behavior. It uses the Lavun logo from `public/lavun-watermark.jpeg`; `public/lavun-watermark-overlay.png` is the transparent version used on photos so the JPEG's checkerboard background does not appear in downloads.
 
 Choose or drop up to 30 JPG, PNG or WebP photos (20 MiB per photo, 200 MiB combined). The standard watermark positions and sizes apply automatically to every photo. The optional adjustments panel starts collapsed, and any size changes apply to the whole batch. Photos retain their original proportions rather than being cropped to a common portrait shape.
 
 Preview each photo using the file list or previous/next buttons. Download an individual photo, or download all photos together in one ZIP. JPG is the default for sharing; PNG is also available. The batch processes one image at a time, reports progress, supports cancellation, and lists unreadable photos that were skipped. Duplicate output filenames receive numeric suffixes so no photos are overwritten. ZIP output is limited to 256 MiB; use JPG or a smaller batch if needed.
 
-The editor places `public/overlay-watermark-main.png` at the top right and `public/overlay-watermark-shadow.png` in the center. The shadow asset already contains approximately 30% opacity, so it is drawn without further fading. Each overlay's visible artwork bounds are detected independently and cached when it loads, so replacing either PNG with different dimensions or transparent padding preserves its alignment. The center watermark defaults to 30% of the photo's shorter edge to keep it compact in portrait and landscape photos; the top-right logo defaults to 22% of the photo's width.
+The SKV editor places `public/overlay-watermark-main.png` at the top right and `public/overlay-watermark-shadow.png` in the center. The shadow asset already contains approximately 30% opacity, so it is drawn without further fading. The Lavun editor uses its transparent logo in both positions and applies 30% opacity to the centered copy. Each overlay's visible artwork bounds are detected independently and cached when it loads, so replacing a PNG with different dimensions or transparent padding preserves its alignment. The center watermark defaults to 30% of the photo's shorter edge to keep it compact in portrait and landscape photos; the top-right logo defaults to 22% of the photo's width.
 
 Photos are processed locally using browser canvas; they are not uploaded or stored. Original proportions are preserved. Large photos are reduced to a maximum 4096-pixel edge and approximately 12 megapixels for reliable export on phones; photos over 64 megapixels are rejected. The preview displays the download dimensions. PNG preserves transparency; JPG uses a white background for transparent areas.
 
