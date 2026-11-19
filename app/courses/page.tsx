@@ -65,6 +65,15 @@ export default function CoursesPage() {
 
       <div className={`${styles.shell} ${styles.communityWrap}`}>
         <CourseCommunity />
+        <aside aria-label="Digital literacy program registration" className="mt-6 flex flex-col items-start gap-4 rounded-2xl border border-green-200 bg-green-50 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+          <div>
+            <h2 className="text-lg font-bold text-green-950">Learning with us in Edati or Lavun?</h2>
+            <p className="mt-1 text-base leading-relaxed text-gray-600">Register for the digital literacy program and choose your preferred course.</p>
+          </div>
+          <Link href="/digital-literacy" className="inline-flex shrink-0 items-center justify-center rounded-full bg-green-800 px-6 py-3 text-base font-bold text-white transition-colors hover:bg-green-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-green-800">
+            Register to attend
+          </Link>
+        </aside>
       </div>
 
       <section className={`${styles.shell} ${styles.browse}`} id="browse" aria-labelledby="browse-title">

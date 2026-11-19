@@ -11,6 +11,7 @@ const links = [
   { href: '/executives', label: 'Executives' },
   { href: '/gallery', label: 'Gallery' },
   { href: '/courses', label: 'Courses' },
+  { href: '/digital-literacy', label: 'Digital Literacy' },
   { href: '/join', label: 'Join Us' },
   { href: '/membership', label: 'Download Membership' },
   { href: '/inquiry', label: 'Inquiry' },
@@ -44,7 +45,7 @@ export default function Nav() {
         </Link>
 
         {/* Desktop nav */}
-        <nav aria-label="Main navigation" className="hidden xl:flex items-center gap-0.5">
+        <nav aria-label="Main navigation" className="hidden 2xl:flex items-center gap-0.5">
           {links.map(({ href, label }) => (
             <Link
               key={href}
@@ -63,7 +64,7 @@ export default function Nav() {
 
         {/* Mobile hamburger */}
         <button
-          className="xl:hidden p-2 rounded-lg text-gray-600 hover:bg-green-50 transition-colors"
+          className="2xl:hidden p-2 rounded-lg text-gray-600 hover:bg-green-50 transition-colors"
           onClick={() => setMobileOpen((o) => !o)}
           aria-label="Toggle navigation"
           aria-expanded={mobileOpen}
@@ -83,7 +84,7 @@ export default function Nav() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div id="mobile-navigation" className="xl:hidden max-h-[calc(100dvh-12rem)] overflow-y-auto border-t border-gray-100 bg-white px-4 pb-4">
+        <div id="mobile-navigation" className="2xl:hidden max-h-[calc(100dvh-12rem)] overflow-y-auto border-t border-gray-100 bg-white px-4 pb-4">
           <nav aria-label="Main navigation" className="flex flex-col gap-1 mt-2">
             {links.map(({ href, label }) => (
               <Link

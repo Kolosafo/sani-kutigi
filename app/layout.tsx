@@ -82,6 +82,7 @@ export default function RootLayout({
                     { href: '/about', label: 'About SKV' },
                     { href: '/gallery', label: 'Gallery' },
                     { href: '/courses', label: 'Free Tech Courses' },
+                    { href: '/digital-literacy', label: 'Digital Literacy Registration' },
                     { href: '/join', label: 'Join the Vanguard' },
                   ].map(({ href, label }) => (
                     <li key={href}>

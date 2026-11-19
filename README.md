@@ -27,6 +27,14 @@ The public `/courses` library is linked from the homepage, navigation and footer
 
 Maintain the course catalog in `lib/skills.ts`. Each skill has a unique slug, learning outcomes, related skill slugs, and resources grouped into `Start here`, `Build depth`, and `Practice & prove it`. Counts and categories are derived from the data, and detail pages are generated during the build. Keep resource links current and distinguish free learning materials from paid certificates, exams, tools or optional services.
 
+## Digital literacy program registration
+
+Participants in **Edati** and **Lavun** can register at `/digital-literacy`, linked from the homepage, navigation, footer and course library. The form requires only their full name, LGA and preferred course. Course choices automatically follow the complete catalog in `lib/skills.ts`.
+
+Apply [the digital literacy migration](supabase/migrations/202611190001_digital_literacy_registrations.sql) in the Supabase SQL Editor before accepting registrations. It creates the separate `digital_literacy_registrations` table, with a UUID reference, name, LGA, course slug and registration timestamp. View or export participants in the Supabase dashboard Table Editor. Course slugs correspond to `/courses/[slug]` and remain stable if display names change.
+
+`POST /api/digital-literacy` validates the fields on the server and saves using the existing server-only Supabase credentials. A successful save returns a reference for the participant. Database errors leave the form available to retry. Row-level security is enabled; anonymous and authenticated database roles have no table access, and there is no public participant-list endpoint.
+
 ## Photo watermarking
 
 The SKV watermark tool is available only through the direct `/watermark` URL. It has no navigation, footer or gallery links, and asks search engines not to index it. This makes it unlisted; it does not require a password or restrict who can open a shared link.
@@ -43,9 +51,12 @@ Photos are processed locally using browser canvas; they are not uploaded or stor
 
 ## Supabase setup
 
-For a **new project**, run [supabase/schema.sql](supabase/schema.sql) in the Supabase dashboard SQL Editor, then run [supabase/migrations/202610110001_membership_registration_details.sql](supabase/migrations/202610110001_membership_registration_details.sql).
+For a **new project**, run [supabase/schema.sql](supabase/schema.sql) in the Supabase dashboard SQL Editor, then run the migrations in order:
 
-For an **existing project**, run only [the membership registration migration](supabase/migrations/202610110001_membership_registration_details.sql) in the SQL Editor before deploying the updated application. The migration runs in a transaction, preserves existing submissions, and can be rerun without changing issued registration numbers. It adds:
+1. [Membership registration details](supabase/migrations/202610110001_membership_registration_details.sql).
+2. [Digital literacy registrations](supabase/migrations/202611190001_digital_literacy_registrations.sql).
+
+For an **existing project**, run only migrations that have not yet been applied before deploying the updated application. Both migrations run in a transaction and can be rerun. The membership migration preserves existing submissions and issued registration numbers. It adds:
 
 - `voter_id`: an optional voter's identification number (VIN), saved as text.
 - `passport_photo_path`: the private storage path for the member's passport photograph. New registrations require a JPEG or PNG photograph up to 2 MiB; existing members retain their records without needing a photograph.

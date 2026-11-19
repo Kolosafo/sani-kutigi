@@ -1,7 +1,6 @@
--- New projects: run this in the Supabase dashboard SQL Editor, then run
--- migrations/202610110001_membership_registration_details.sql to install the
--- registration counter, constraints, backfill, and private passport bucket.
--- Existing projects only need the migration; see README.md for setup.
+-- New projects: run this in the Supabase dashboard SQL Editor, then run all
+-- migrations in order to install membership details and program registrations.
+-- Existing projects only need unapplied migrations; see README.md for setup.
 
 CREATE TABLE IF NOT EXISTS public.submissions (
   id          TEXT        PRIMARY KEY,

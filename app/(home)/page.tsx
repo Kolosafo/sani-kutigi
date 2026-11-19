@@ -132,6 +132,22 @@ export default function Home() {
         </div>
       </section>
 
+      <section aria-labelledby="digital-literacy-heading" className="border-b border-green-100 bg-green-50 px-6 py-10 sm:py-12">
+        <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="max-w-2xl">
+            <p className="mb-2 text-sm font-bold uppercase tracking-widest text-green-700">Edati &amp; Lavun</p>
+            <h2 id="digital-literacy-heading" className="text-2xl font-extrabold leading-tight text-green-950 sm:text-3xl">Digital skills start here.</h2>
+            <p className="mt-3 text-base leading-relaxed text-gray-600">
+              Register for our digital literacy program. Choose a course from our
+              learning library and submit your name and LGA to take part.
+            </p>
+          </div>
+          <Link href="/digital-literacy" className="inline-flex shrink-0 items-center justify-center rounded-full bg-green-800 px-7 py-3.5 text-base font-bold text-white transition-colors hover:bg-green-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-green-800">
+            Register for the program
+          </Link>
+        </div>
+      </section>
+
       {/* ── Birthday appreciation ── */}
       <section aria-labelledby="birthday-appreciation-heading" className="bg-linear-to-br from-amber-50 via-white to-green-50 px-6 py-16 sm:py-20">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 items-center gap-10 lg:gap-16">
