@@ -4,8 +4,8 @@ import { DIGITAL_LITERACY_COURSES, DIGITAL_LITERACY_LGAS } from '@/lib/digital-l
 import RegistrationForm from './registration-form'
 import styles from './digital-literacy.module.css'
 
-const title = 'Digital Literacy Programme | Edati & Lavun'
-const description = 'Register for the digital literacy programme in Edati and Lavun. Enter your name, select your LGA and choose the course you want to study.'
+const title = 'Digital Literacy Programme | Niger South'
+const description = 'Register for the digital literacy programme across all eight LGAs in Niger South: Agaie, Bida, Edati, Gbako, Katcha, Lapai, Lavun and Mokwa. Choose your course.'
 
 export const metadata: Metadata = {
   title,
@@ -31,13 +31,13 @@ export default function DigitalLiteracyPage() {
                 <path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" />
                 <circle cx="12" cy="10" r="2.5" />
               </svg>
-              Edati &amp; Lavun, Niger State
+              Niger South, Niger State
             </div>
             <p className={styles.eyebrow}>Digital literacy programme</p>
             <h1 id="programme-title">New skills.<br /><span>New possibilities.</span></h1>
             <p className={styles.introCopy}>
               Take the next step in your digital journey. Register for our
-              programme in Edati and Lavun and tell us what you would like to learn.
+              programme across all {DIGITAL_LITERACY_LGAS.length} LGAs in Niger South and tell us what you would like to learn.
             </p>
 
             <div className={styles.learningCard}>
@@ -58,7 +58,7 @@ export default function DigitalLiteracyPage() {
               <h2>A simple start</h2>
               <ul>
                 <li><CheckIcon />Enter your full name.</li>
-                <li><CheckIcon />Select Edati or Lavun as your LGA.</li>
+                <li><CheckIcon />Select your LGA in Niger South.</li>
                 <li><CheckIcon />Choose the course you want to study.</li>
               </ul>
             </div>

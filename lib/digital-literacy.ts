@@ -1,6 +1,15 @@
 import { skills } from '@/lib/skills'
 
-export const DIGITAL_LITERACY_LGAS = ['Edati', 'Lavun'] as const
+export const DIGITAL_LITERACY_LGAS = [
+  'Agaie',
+  'Bida',
+  'Edati',
+  'Gbako',
+  'Katcha',
+  'Lapai',
+  'Lavun',
+  'Mokwa',
+] as const
 
 // Keep the registration choices in step with the public course library.
 export const DIGITAL_LITERACY_COURSES = skills.map(({ slug, name }) => ({ slug, name }))
@@ -23,7 +32,7 @@ export function validateDigitalLiteracyRegistration(body: unknown) {
     fieldErrors.name = 'Enter your full name using 1 to 120 characters.'
   }
   if (!DIGITAL_LITERACY_LGAS.some((option) => option === lga)) {
-    fieldErrors.lga = 'Choose Edati or Lavun as your LGA.'
+    fieldErrors.lga = 'Choose your LGA in Niger South from the list.'
   }
   if (!DIGITAL_LITERACY_COURSES.some((option) => option.slug === course)) {
     fieldErrors.course = 'Choose a course from the list.'

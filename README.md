@@ -29,9 +29,9 @@ Maintain the course catalog in `lib/skills.ts`. Each skill has a unique slug, le
 
 ## Digital literacy program registration
 
-Participants in **Edati** and **Lavun** can register at `/digital-literacy`, linked from the homepage, navigation, footer and course library. The form requires only their full name, LGA and preferred course. Course choices automatically follow the complete catalog in `lib/skills.ts`.
+Participants across all eight Niger South LGAs—**Agaie**, **Bida**, **Edati**, **Gbako**, **Katcha**, **Lapai**, **Lavun** and **Mokwa**—can register at `/digital-literacy`, linked from the homepage, navigation, footer and course library. The form requires only their full name, LGA and preferred course. Course choices automatically follow the complete catalog in `lib/skills.ts`.
 
-Apply [the digital literacy migration](supabase/migrations/202611190001_digital_literacy_registrations.sql) in the Supabase SQL Editor before accepting registrations. It creates the separate `digital_literacy_registrations` table, with a UUID reference, name, LGA, course slug and registration timestamp. View or export participants in the Supabase dashboard Table Editor. Course slugs correspond to `/courses/[slug]` and remain stable if display names change.
+Apply [the digital literacy table migration](supabase/migrations/202611190001_digital_literacy_registrations.sql), then [the Niger South LGA migration](supabase/migrations/202611190002_digital_literacy_niger_south_lgas.sql) in the Supabase SQL Editor before accepting registrations. If the table migration is already applied, run only the LGA migration before deploying this update. These create the separate `digital_literacy_registrations` table, with a UUID reference, name, LGA, course slug and registration timestamp, and allow all eight LGAs while preserving existing registrations. View or export participants in the Supabase dashboard Table Editor. Course slugs correspond to `/courses/[slug]` and remain stable if display names change.
 
 `POST /api/digital-literacy` validates the fields on the server and saves using the existing server-only Supabase credentials. A successful save returns a reference for the participant. Database errors leave the form available to retry. Row-level security is enabled; anonymous and authenticated database roles have no table access, and there is no public participant-list endpoint.
 
@@ -55,8 +55,9 @@ For a **new project**, run [supabase/schema.sql](supabase/schema.sql) in the Sup
 
 1. [Membership registration details](supabase/migrations/202610110001_membership_registration_details.sql).
 2. [Digital literacy registrations](supabase/migrations/202611190001_digital_literacy_registrations.sql).
+3. [All Niger South LGAs for digital literacy](supabase/migrations/202611190002_digital_literacy_niger_south_lgas.sql).
 
-For an **existing project**, run only migrations that have not yet been applied before deploying the updated application. Both migrations run in a transaction and can be rerun. The membership migration preserves existing submissions and issued registration numbers. It adds:
+For an **existing project**, run only migrations that have not yet been applied before deploying the updated application. All migrations run in a transaction and can be rerun. The membership migration preserves existing submissions and issued registration numbers. It adds:
 
 - `voter_id`: an optional voter's identification number (VIN), saved as text.
 - `passport_photo_path`: the private storage path for the member's passport photograph. New registrations require a JPEG or PNG photograph up to 2 MiB; existing members retain their records without needing a photograph.
