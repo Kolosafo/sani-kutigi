@@ -1,7 +1,7 @@
 import { jsPDF } from 'jspdf'
 import {
   getMembershipDetails,
-  MEMBERSHIP_REVIEW_NOTICE,
+  getMembershipStatus,
   type MembershipRegistration,
 } from './membership'
 
@@ -19,6 +19,7 @@ class MembershipPhotoError extends Error {
 
 export function createMembershipPdf(membership: MembershipRegistration, font: string, photo?: PassportPhoto | null) {
   if (membership.passportPhotoUrl && !photo) throw new MembershipPhotoError()
+  const membershipStatus = getMembershipStatus(membership)
 
   const pdf = new jsPDF({ format: 'a4', unit: 'mm', compress: true })
   pdf.addFileToVFS('Geist-Regular.ttf', font)
@@ -94,8 +95,8 @@ export function createMembershipPdf(membership: MembershipRegistration, font: st
 
     pdf.setFont('helvetica', 'bold')
     pdf.setFontSize(10)
-    pdf.setTextColor('#92400e')
-    pdf.text('Pending review', margin + 8, margin + 50)
+    pdf.setTextColor(membership.status === 'accepted' ? '#166534' : '#92400e')
+    pdf.text(membershipStatus.label, margin + 8, margin + 50)
   }
 
   drawHeader()
@@ -145,7 +146,7 @@ export function createMembershipPdf(membership: MembershipRegistration, font: st
   pdf.setFont('helvetica', 'normal')
   pdf.setFontSize(9)
   pdf.setTextColor('#6b7280')
-  pdf.text(pdf.splitTextToSize(MEMBERSHIP_REVIEW_NOTICE, width - 16), margin + 8, y + 8)
+  pdf.text(pdf.splitTextToSize(membershipStatus.notice, width - 16), margin + 8, y + 8)
 
   return pdf
 }

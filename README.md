@@ -56,6 +56,7 @@ For a **new project**, run [supabase/schema.sql](supabase/schema.sql) in the Sup
 1. [Membership registration details](supabase/migrations/202610110001_membership_registration_details.sql).
 2. [Digital literacy registrations](supabase/migrations/202611190001_digital_literacy_registrations.sql).
 3. [All Niger South LGAs for digital literacy](supabase/migrations/202611190002_digital_literacy_niger_south_lgas.sql).
+4. [Membership approval status](supabase/migrations/202611190003_membership_approval_status.sql).
 
 For an **existing project**, run only migrations that have not yet been applied before deploying the updated application. All migrations run in a transaction and can be rerun. The membership migration preserves existing submissions and issued registration numbers. It adds:
 
@@ -67,5 +68,7 @@ For an **existing project**, run only migrations that have not yet been applied 
 The database assigns serial numbers using a private, locked counter in the same transaction as the registration. Failed inserts and non-membership submissions do not consume numbers. Existing numbers stay stable when member details are updated; deleting a member does not recycle their number. The application displays serials as `SKV-2027-000001`, `SKV-2027-000002`, and so on.
 
 The submissions table and counter use row-level security. The migration creates no public database or Storage policies, and restricts the counter's function to the server role. Uploads and card retrieval use the application's server routes.
+
+The approval-status migration adds `membership_status`, which defaults to `pending`. The coordinating office can set an individual membership to `accepted` through the private database. Retrieved cards and downloaded PDFs show the saved decision. Registration requests cannot set their own approval status.
 
 The migration has to be run in Supabase separately; configuring the application environment variables does not update the database schema.

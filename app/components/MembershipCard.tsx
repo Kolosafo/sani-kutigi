@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {
   getMembershipDetails,
-  MEMBERSHIP_REVIEW_NOTICE,
+  getMembershipStatus,
   type MembershipRegistration,
 } from '@/lib/membership'
 
@@ -14,6 +14,7 @@ export default function MembershipCard({ membership }: { membership: MembershipR
   const [error, setError] = useState('')
   const [failedPhotoUrl, setFailedPhotoUrl] = useState<string | null>(null)
   const photoUnavailable = Boolean(membership.passportPhotoUrl && failedPhotoUrl === membership.passportPhotoUrl)
+  const membershipStatus = getMembershipStatus(membership)
 
   async function handleDownload() {
     setDownloading(true)
@@ -78,8 +79,10 @@ export default function MembershipCard({ membership }: { membership: MembershipR
         </div>
 
         <div className="p-6 sm:p-8">
-          <span className="mb-6 inline-block rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-800">
-            Pending review
+          <span className={`mb-6 inline-block rounded-full border px-3 py-1 text-xs font-bold ${membership.status === 'accepted'
+            ? 'border-green-200 bg-green-50 text-green-800'
+            : 'border-amber-200 bg-amber-50 text-amber-800'}`}>
+            {membershipStatus.label}
           </span>
           <dl className="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
             {getMembershipDetails(membership).map(({ label, value }) => (
@@ -90,7 +93,7 @@ export default function MembershipCard({ membership }: { membership: MembershipR
             ))}
           </dl>
           <p className="mt-6 border-t border-gray-200 pt-4 text-xs leading-relaxed text-gray-500">
-            {MEMBERSHIP_REVIEW_NOTICE}
+            {membershipStatus.notice}
           </p>
         </div>
       </article>

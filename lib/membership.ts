@@ -1,6 +1,7 @@
 export type MembershipRegistration = {
   id: string
   registrationNumber: string
+  status: 'pending' | 'accepted'
   passportPhotoUrl: string | null
   name: string
   email: string
@@ -15,11 +16,12 @@ export const PASSPORT_PHOTO_MAX_BYTES = 2 * 1024 * 1024
 export const PASSPORT_PHOTO_TYPES = ['image/jpeg', 'image/png']
 
 export const MEMBERSHIP_CARD_FIELDS =
-  'id, registration_number, passport_photo_path, name, email, phone, lga, ward, occupation, created_at'
+  'id, registration_number, membership_status, passport_photo_path, name, email, phone, lga, ward, occupation, created_at'
 
-type MembershipSubmission = Omit<MembershipRegistration, 'createdAt' | 'registrationNumber' | 'passportPhotoUrl'> & {
+type MembershipSubmission = Omit<MembershipRegistration, 'createdAt' | 'registrationNumber' | 'passportPhotoUrl' | 'status'> & {
   created_at: string
   registration_number: number | string
+  membership_status?: string | null
   passport_photo_path: string
 }
 
@@ -30,6 +32,7 @@ export function toMembershipRegistration(
   return {
     id: submission.id,
     registrationNumber: `SKV-2027-${String(submission.registration_number).padStart(6, '0')}`,
+    status: submission.membership_status === 'accepted' ? 'accepted' : 'pending',
     passportPhotoUrl,
     name: submission.name,
     email: submission.email,
@@ -41,8 +44,19 @@ export function toMembershipRegistration(
   }
 }
 
-export const MEMBERSHIP_REVIEW_NOTICE =
-  'This card acknowledges your registration. Membership is pending review by the coordinating office.'
+export function getMembershipStatus(membership: Pick<MembershipRegistration, 'status'>) {
+  if (membership.status === 'accepted') {
+    return {
+      label: 'Accepted',
+      notice: 'Your membership has been accepted by the coordinating office.',
+    }
+  }
+
+  return {
+    label: 'Pending review',
+    notice: 'This card acknowledges your registration. Membership is pending review by the coordinating office.',
+  }
+}
 
 export function getMembershipDetails(membership: MembershipRegistration) {
   return [

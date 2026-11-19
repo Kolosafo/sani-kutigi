@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS public.submissions (
   voter_id    TEXT        NOT NULL DEFAULT '',
   passport_photo_path TEXT NOT NULL DEFAULT '',
   registration_number BIGINT,
+  membership_status TEXT NOT NULL DEFAULT 'pending'
+    CONSTRAINT submissions_membership_status_check CHECK (membership_status IN ('pending', 'accepted')),
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
