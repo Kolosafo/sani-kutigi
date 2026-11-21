@@ -1,3 +1,6 @@
+export const MEMBERSHIP_REGISTRATION_EXPIRED_MESSAGE =
+  'Membership registration has expired. New registrations are no longer being accepted.'
+
 export type MembershipRegistration = {
   id: string
   registrationNumber: string

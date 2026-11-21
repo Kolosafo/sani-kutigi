@@ -1,103 +1,43 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
-import MembershipForm from '../components/MembershipForm'
+import { MEMBERSHIP_REGISTRATION_EXPIRED_MESSAGE } from '@/lib/membership'
 
-const benefits = [
-  { icon: '🗳️', text: 'Attend and vote in all general and executive meetings.' },
-  { icon: '🎤', text: 'Express opinions freely within organizational rules.' },
-  { icon: '🏃', text: 'Participate in campaigns, programs and activities.' },
-  { icon: '🏆', text: 'Be considered for appointment into offices and committees.' },
-]
+export const metadata: Metadata = {
+  title: 'Registration Expired | SKV 2027',
+  description: MEMBERSHIP_REGISTRATION_EXPIRED_MESSAGE,
+}
 
 export default function JoinPage() {
   return (
-    <div data-membership-page className="py-14 px-6">
-      <div className="max-w-5xl mx-auto">
-
-        {/* Header */}
-        <div data-membership-print-hidden className="text-center mb-12">
-          <span className="inline-block bg-green-100 text-green-800 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
-            Membership
+    <div className="px-6 py-14">
+      <div className="mx-auto max-w-2xl text-center">
+        <p className="mb-4 text-sm font-bold uppercase tracking-widest text-green-800">
+          Sani Kutigi Vanguard
+        </p>
+        <section aria-labelledby="registration-status" className="rounded-2xl border border-red-200 bg-red-50 px-6 py-10 sm:px-10">
+          <span className="mb-5 inline-block rounded-full bg-red-100 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-red-800">
+            Expired
           </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3">
-            Join the Sani Kutigi Vanguard
+          <h1 id="registration-status" className="mb-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">
+            Registration expired
           </h1>
-          <p className="text-green-700 italic text-lg font-medium mb-4">
-            &ldquo;Leading the Way for a Greater Niger South&rdquo;
+          <p className="leading-relaxed text-gray-600">
+            {MEMBERSHIP_REGISTRATION_EXPIRED_MESSAGE}
           </p>
-          <p className="text-gray-500 text-base max-w-2xl mx-auto leading-relaxed">
-            Become a registered member of SKV 2027 and join thousands of supporters working
-            to bring Distinguished Mohammed Sani Idris Legbo Kutigi to the Niger State South
-            Senate seat. Together we are stronger.
+        </section>
+
+        <div className="mt-8">
+          <h2 className="mb-2 text-lg font-bold text-gray-900">Already registered?</h2>
+          <p className="mb-5 text-sm leading-relaxed text-gray-500">
+            You can still retrieve, print or download your existing membership card.
           </p>
+          <Link href="/membership" className="inline-block rounded-full bg-green-700 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-green-800">
+            Download membership card
+          </Link>
+          <Link href="/" className="mt-5 block text-sm font-semibold text-green-700 underline underline-offset-4 hover:text-green-800">
+            Back to home
+          </Link>
         </div>
-
-        <div data-membership-layout className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-
-          {/* Left: eligibility & benefits */}
-          <div data-membership-print-hidden className="lg:col-span-1 space-y-6">
-
-            <div className="bg-green-50 border border-green-200 rounded-2xl p-6">
-              <h2 className="font-extrabold text-green-900 text-lg mb-2">Already registered?</h2>
-              <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                Retrieve your membership card to print or download it again anytime.
-              </p>
-              <Link href="/membership" className="block bg-green-700 text-white text-center text-sm font-bold px-4 py-3 rounded-full hover:bg-green-800 transition-colors">
-                Download membership
-              </Link>
-            </div>
-
-            <div className="bg-green-800 text-white rounded-2xl p-6">
-              <h2 className="font-extrabold text-lg mb-3">Eligibility</h2>
-              <p className="text-green-200 text-sm leading-relaxed">
-                Membership is open to any person who supports the aims and objectives of SKV 2027,
-                is of good character, and agrees to abide by our Constitution.
-              </p>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-              <h2 className="font-extrabold text-gray-900 text-lg mb-4">Member Benefits</h2>
-              <ul className="space-y-4">
-                {benefits.map(({ icon, text }) => (
-                  <li key={text} className="flex gap-3 text-sm text-gray-600">
-                    <span className="text-xl shrink-0">{icon}</span>
-                    <span>{text}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
-              <h2 className="font-bold text-blue-900 text-base mb-2">Official Colours</h2>
-              <div className="flex gap-2 mt-2">
-                {[
-                  { color: 'bg-green-700', label: 'Green' },
-                  { color: 'bg-white border border-gray-300', label: 'White' },
-                  { color: 'bg-blue-700', label: 'Blue' },
-                  { color: 'bg-red-600', label: 'Red' },
-                ].map(({ color, label }) => (
-                  <div key={label} className="flex flex-col items-center gap-1">
-                    <div className={`w-8 h-8 rounded-full ${color}`} />
-                    <span className="text-xs text-gray-500">{label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-          </div>
-
-          {/* Right: form */}
-          <div className="lg:col-span-2">
-            <div data-membership-form-panel className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8 shadow-sm">
-              <h2 data-membership-print-hidden className="font-extrabold text-gray-900 text-xl mb-1">Registration Form</h2>
-              <p data-membership-print-hidden className="text-gray-400 text-sm mb-6">
-                Fields marked <span className="text-red-500 font-bold">*</span> are required.
-              </p>
-              <MembershipForm />
-            </div>
-          </div>
-
-        </div>
-
       </div>
     </div>
   )

@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 import { supabase } from '@/lib/db'
 import { notifyMemberRegistered } from '@/lib/membership-count'
-import { MEMBERSHIP_CARD_FIELDS, toMembershipRegistration } from '@/lib/membership'
+import { MEMBERSHIP_CARD_FIELDS, MEMBERSHIP_REGISTRATION_EXPIRED_MESSAGE, toMembershipRegistration } from '@/lib/membership'
 import {
   getPassportPhotoUrl,
   PassportPhotoError,
@@ -72,6 +72,12 @@ export async function POST(request: NextRequest) {
 
   if (typeof type !== 'string' || !VALID_TYPES.has(type as SubmissionType)) {
     return Response.json({ error: 'Invalid type' }, { status: 400 })
+  }
+  if (type === 'membership') {
+    return Response.json({ error: MEMBERSHIP_REGISTRATION_EXPIRED_MESSAGE }, {
+      status: 410,
+      headers: { 'Cache-Control': 'private, no-store' },
+    })
   }
   if (typeof name !== 'string' || !name.trim() || typeof email !== 'string' || !email.trim()) {
     return Response.json({ error: 'Missing required fields: name and email' }, { status: 400 })
