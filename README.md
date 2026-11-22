@@ -21,10 +21,6 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). Use `npm run lint` and `npm run build` to check changes.
 
-## Membership registration status
-
-Vanguard membership registration is expired. `/join` displays the expired notice instead of a form, and `POST /api/submissions` rejects membership registrations with HTTP `410 Gone` before validating personal details, processing photos or writing to the database. Existing members can still retrieve, print and download their cards at `/membership`. Digital literacy registration remains open.
-
 ## Free tech courses
 
 The public `/courses` library is linked from the homepage, navigation and footer. Visitors can search skills and providers, combine coding/no-code and field filters, and open staged learning paths at `/courses/[slug]`. No membership or account on this site is needed.
