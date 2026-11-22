@@ -132,6 +132,7 @@ export default function RegistrationForm() {
         return
       }
       setRegistration({ groupName: details.group_name, reference: result.reference })
+      window.dispatchEvent(new Event('skv:support-group-registered'))
     } catch {
       setError('We could not confirm your registration. Check your connection and try again. Your details and selected files are still here.')
     } finally {

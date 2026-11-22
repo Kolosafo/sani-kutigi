@@ -11,6 +11,7 @@ import {
   type PreparedSupportGroupAttachment,
   SupportGroupUploadError,
 } from '@/lib/support-group-storage'
+import { notifySupportGroupRegistered } from '@/lib/support-group-count'
 
 export const runtime = 'nodejs'
 
@@ -98,6 +99,7 @@ export async function POST(request: Request) {
       certificate: attachments.certificate!,
       membership_register: attachments.membership_register!,
     })
+    await notifySupportGroupRegistered()
     return Response.json({ success: true, ...registration }, { status: 201, headers })
   } catch {
     return Response.json({ error: 'We could not save your registration. Please try again shortly.' }, { status: 500, headers })

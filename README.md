@@ -51,6 +51,8 @@ Registrations are kept separately from individual memberships in the private `su
 
 The bucket is private, has no public read policies and is accessed by the application's server-only secret key. The public API does not list registrations or return document download URLs. No additional database table or SQL migration is required for this feature.
 
+The registration page identifies DG Support Group Comrade Santali Abdullahi Mohammed as the reviewer. The navigation displays the registered support group total alongside the member total. `GET /api/support-groups/count` returns only the aggregate count of completed registrations; `/api/support-groups/count/stream` pushes updates after successful registrations, with periodic recounts and polling to recover missed updates. Incomplete uploads are excluded from the total.
+
 ## Photo watermarking
 
 The SKV watermark tool is available only through the direct `/watermark` URL. It has no navigation, footer or gallery links, and asks search engines not to index it. This makes it unlisted; it does not require a password or restrict who can open a shared link.

@@ -32,6 +32,9 @@ export default function SupportGroupsPage() {
             <p className="mt-5 max-w-xl text-base leading-relaxed text-gray-600">
               Register your group with SKV 2027. Share your leadership contacts, headquarters and membership details so we can coordinate support group activities.
             </p>
+            <p className="mt-3 max-w-xl text-base font-medium leading-relaxed text-green-800">
+              Your support group will be reviewed by DG Support Group Comrade Santali Abdullahi Mohammed.
+            </p>
 
             <aside className="mt-7 rounded-2xl border border-green-200 bg-green-800 p-6 text-white" aria-labelledby="prepare-documents-title">
               <h2 id="prepare-documents-title" className="text-base font-bold">Have these ready</h2>

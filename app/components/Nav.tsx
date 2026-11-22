@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import MemberCountButton from './MemberCountButton'
+import SupportGroupCountButton from './SupportGroupCountButton'
 
 const links = [
   { href: '/', label: 'Home' },
@@ -80,7 +81,10 @@ export default function Nav() {
       </div>
 
       <div className="border-t border-green-100 bg-green-50 px-4 py-2">
-        <MemberCountButton />
+        <div className="flex flex-wrap items-start justify-center gap-x-4 gap-y-2">
+          <MemberCountButton />
+          <SupportGroupCountButton />
+        </div>
       </div>
 
       {/* Mobile menu */}
