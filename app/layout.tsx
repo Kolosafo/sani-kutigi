@@ -84,6 +84,7 @@ export default function RootLayout({
                     { href: '/courses', label: 'Free Tech Courses' },
                     { href: '/digital-literacy', label: 'Digital Literacy Registration' },
                     { href: '/join', label: 'Join the Vanguard' },
+                    { href: '/support-groups', label: 'Register a Support Group' },
                   ].map(({ href, label }) => (
                     <li key={href}>
                       <Link href={href} className="hover:text-green-400 transition-colors">{label}</Link>

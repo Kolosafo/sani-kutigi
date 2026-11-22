@@ -382,6 +382,15 @@ export default function Home() {
               </Link>
             ))}
           </div>
+          <div className="mt-6 flex flex-col items-start gap-4 rounded-2xl border border-green-200 bg-green-50 p-6 text-left sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h3 className="font-bold text-green-900">Lead a support group?</h3>
+              <p className="mt-1 text-sm text-gray-600">Register your group with its leadership details, registration certificate and membership register.</p>
+            </div>
+            <Link href="/support-groups" className="shrink-0 rounded-full bg-green-700 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-green-800">
+              Register your support group
+            </Link>
+          </div>
         </div>
       </section>
 

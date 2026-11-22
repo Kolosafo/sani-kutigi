@@ -13,6 +13,7 @@ const links = [
   { href: '/courses', label: 'Courses' },
   { href: '/digital-literacy', label: 'Digital Literacy' },
   { href: '/join', label: 'Join Us' },
+  { href: '/support-groups', label: 'Support Groups' },
   { href: '/membership', label: 'Download Membership' },
   { href: '/inquiry', label: 'Inquiry' },
   { href: '/complaint', label: 'Complaint' },
@@ -45,7 +46,7 @@ export default function Nav() {
         </Link>
 
         {/* Desktop nav */}
-        <nav aria-label="Main navigation" className="hidden 2xl:flex items-center gap-0.5">
+        <nav aria-label="Main navigation" className="hidden 2xl:flex flex-wrap items-center justify-end gap-0.5">
           {links.map(({ href, label }) => (
             <Link
               key={href}

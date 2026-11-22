@@ -35,6 +35,22 @@ Apply [the digital literacy table migration](supabase/migrations/202611190001_di
 
 `POST /api/digital-literacy` validates the fields on the server and saves using the existing server-only Supabase credentials. A successful save returns a reference for the participant. Database errors leave the form available to retry. Row-level security is enabled; anonymous and authenticated database roles have no table access, and there is no public participant-list endpoint.
 
+## Support-group registration
+
+Support groups can register at `/support-groups`, linked from the homepage, navigation and footer. The form requires the group name; president/chairman name and phone number; secretary name and phone number; headquarters address; number of registered members; registration certificate; and membership register.
+
+Certificates accept PDF, JPEG or PNG. Membership registers also accept CSV, XLS and XLSX. Each document must be 2 MiB or smaller. `POST /api/support-groups` validates the details and document contents on the server, then returns a registration reference only after saving the complete registration.
+
+Configure the private storage bucket once with the same server credentials used by the deployed site:
+
+```bash
+node --env-file=.env scripts/setup-support-group-storage.mjs
+```
+
+Registrations are kept separately from individual memberships in the private `support-group-registrations` Supabase Storage bucket. Each registration has its own UUID folder containing the certificate, membership register and `registration.json`. The JSON file holds the submitted details, reference, timestamp and document metadata, and is written last to mark a completed registration. Failed saves clean up uploaded documents. In the Supabase dashboard, open **Storage > support-group-registrations** to review a registration's JSON file and its documents. Only folders containing `registration.json` represent completed registrations.
+
+The bucket is private, has no public read policies and is accessed by the application's server-only secret key. The public API does not list registrations or return document download URLs. No additional database table or SQL migration is required for this feature.
+
 ## Photo watermarking
 
 The SKV watermark tool is available only through the direct `/watermark` URL. It has no navigation, footer or gallery links, and asks search engines not to index it. This makes it unlisted; it does not require a password or restrict who can open a shared link.
