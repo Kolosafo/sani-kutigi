@@ -47,8 +47,8 @@ export function toMembershipRegistration(
 export function getMembershipStatus(membership: Pick<MembershipRegistration, 'status'>) {
   if (membership.status === 'accepted') {
     return {
-      label: 'Accepted',
-      notice: 'Your membership has been accepted by the coordinating office.',
+      label: 'Approved',
+      notice: 'Your membership has been approved.',
     }
   }
 

@@ -129,7 +129,11 @@ export async function POST(request: NextRequest) {
     .insert({
       id, type, name: name.trim(), email: email.trim(), phone, subject, message, lga, ward, occupation,
       nin: type === 'membership' ? normalizedNin : '',
-      ...(type === 'membership' ? { voter_id: voterId, passport_photo_path: photoPath } : {}),
+      ...(type === 'membership' ? {
+        voter_id: voterId,
+        passport_photo_path: photoPath,
+        membership_status: 'accepted',
+      } : {}),
     })
   const { data: submission, error } = await query
     .select(MEMBERSHIP_CARD_FIELDS)

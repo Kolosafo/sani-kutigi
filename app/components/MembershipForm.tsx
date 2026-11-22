@@ -191,12 +191,11 @@ export default function MembershipForm() {
             <p className="text-xs text-gray-500 mt-1">Keep this number for future enquiries.</p>
           </div>
           <p className="text-gray-600 mb-2">
-            Thank you, <span className="font-semibold">{membership.name}</span>. Your membership
-            registration has been received and will be reviewed by the coordinating office.
+            Thank you, <span className="font-semibold">{membership.name}</span>. Your registration
+            was successful and your membership has been approved.
           </p>
           <p className="text-gray-500 text-sm">
-            You will be contacted via <span className="font-medium">{membership.email}</span> once
-            your membership is confirmed.
+            You can now print or download your membership card below.
           </p>
         </div>
         <MembershipCard membership={membership} />
